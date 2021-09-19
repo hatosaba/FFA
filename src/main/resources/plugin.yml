@@ -1,0 +1,28 @@
+name: Uhcffa
+version: ${project.version}
+main: si.f5.hatosaba.uhcffa.Uhcffa
+depend: [Essentials, PvPLevels]
+softdepend: [PlaceholderAPI]
+commands:
+#  ffa:
+#    permission: ffa.reload
+#    permission-message: 'You do not have permission'
+#  spawn:
+#    permission: ffa.spawn
+#    permission-message: 'You do not have permission'
+#  item:
+#    permission: ffa.item
+#    permission-message: 'You do not have permission'
+#  setspawn:
+#    permission: ffa.spawn
+#    permission-message: 'You do not have permission'
+#  seteditroom:
+#    permission: ffa.edit
+#    permission-message: 'You do not have permission'
+#  setkit:
+#    permission: ffa.setkit
+#    permission-message: 'You do not have permission'
+#  setlobby:
+#    permission: ffa.setlobby
+#    permission-message: 'You do not have permission'
+#  kitsave:

@@ -1,0 +1,8 @@
+Kit:
+  Name: '&aStandard Kit'
+  Coin: 0 # Free
+  Type: Normal
+  Icon: DIAMOND_SWORD
+Inventory:
+  armor:
+  items:
