@@ -37,9 +37,8 @@ public class UhcFFAPlaceholder extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-
-        if (params.equalsIgnoreCase("meetup_next_event_time")) {
-            return plugin.getAutomaticEvent().asHourString() + "";
+        switch (params) {
+            case "":
         }
 
         // Return null as default because it does not seem to be a valid placeholder.

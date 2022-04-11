@@ -11,12 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import si.f5.hatosaba.uhcffa.Constants;
+import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
+import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.schedule.Sync;
+import si.f5.hatosaba.uhcffa.specialItem.ExecutableItemType;
 import si.f5.hatosaba.uhcffa.spectetor.SpectetorSet;
-import si.f5.hatosaba.uhcffa.user.UserSet;
 
 import java.util.HashSet;
 
@@ -31,7 +31,7 @@ public class PlayerRespawnListener implements Listener {
         Player player = event.getPlayer();
         if (!player.getWorld().getName().equals("kitpvp"))
             return;
-        if (Constants.RESPAWN_ITEM.isSimilar(event.getItem())) {
+        if (ExecutableItemType.RESPAWN_ITEM.getItem().isSimilar(event.getItem())) {
 
             //クールダウン中なら戻る
             if(cooldownPlayers.contains(player)) return;
@@ -54,8 +54,6 @@ public class PlayerRespawnListener implements Listener {
                     for (PotionEffect effect : player.getActivePotionEffects()) {
                         player.removePotionEffect(effect.getType());
                     }
-                    if(UserSet.getInstnace().getUser(player).scoreboardBuilder != null)
-                        UserSet.getInstnace().getUser(player).scoreboardBuilder.clearScoreboard();
                     player.setAllowFlight(true);
                     player.setFlying(true);
                     tryGivingDefaultItemsTo(player);
@@ -85,13 +83,9 @@ public class PlayerRespawnListener implements Listener {
 
     private void tryGivingDefaultItemsTo(Player player) {
         if (KitManager.getInstance().isSelected(player)) {
-            tryGivingItemTo(player, Constants.INSTANT_RESPAWN_ITEM, 0);
-            tryGivingItemTo(player, Constants.KIT_SELECTOR, 2);
-            tryGivingItemTo(player, Constants.SHOP, 4);
-            tryGivingItemTo(player, Constants.BACK_TO_LOBBY, 8);
+            Uhcffa.instance().setSpectatorItem(player);
         } else {
-            tryGivingItemTo(player, Constants.KIT_SELECTOR, 0);
-            tryGivingItemTo(player, Constants.SHOP, 4);
+            Uhcffa.instance().setLobbyItem(player);
         }
     }
 

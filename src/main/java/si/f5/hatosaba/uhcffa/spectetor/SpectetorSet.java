@@ -48,6 +48,8 @@ public class SpectetorSet {
         //全プレイヤーを表示する
         forEachOnlinePlayer((target) -> show(target, player)); // playerをtargetに表示
         forEachHideModeUser(user -> hide(player, user)); // userをplayerから非表示にする
+        player.setAllowFlight(false);
+        player.setFlying(false);
 
         hideModePlayers.remove(player);
     }
@@ -56,18 +58,20 @@ public class SpectetorSet {
         //スペクターモードのものを非表示にする
         forEachOnlinePlayer(user -> hide(user, player)); // userをplayerから非表示にする
         forEachHideModeUser(user -> show(player, user));
+        player.setAllowFlight(true);
+        player.setFlying(true);
 
         hideModePlayers.add(player);
     }
 
     //スペクターモードではない者に対して処理をする
     private void forEachOnlinePlayer(Consumer<Player> processing){
-        Bukkit.getOnlinePlayers().stream().filter(player -> !isHideMode(player)).forEach(processing::accept);
+        Bukkit.getOnlinePlayers().stream().filter(player -> !isHideMode(player)).forEach(processing);
     }
 
     //全スペクターモード使用者に対して処理をする
     private void forEachHideModeUser(Consumer<Player> processing){
-        hideModePlayers.stream().forEach(processing::accept);
+        hideModePlayers.forEach(processing);
     }
 
 }

@@ -18,4 +18,10 @@ public class SoundEffect {
         player.playSound(player.getLocation(), type, volume, pitch);
     }
 
+    public void play(Player... player) {
+        for (Player p : player) {
+            p.playSound(p.getLocation(), type, volume, pitch);
+        }
+    }
+
 }

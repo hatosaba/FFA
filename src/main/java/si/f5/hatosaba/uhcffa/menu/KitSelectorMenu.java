@@ -4,44 +4,88 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.ArenaManager;
+import si.f5.hatosaba.uhcffa.cosmetics.killeffect.Effect;
+import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
+import si.f5.hatosaba.uhcffa.sound.SoundEffect;
+import si.f5.hatosaba.uhcffa.sound.SoundEffects;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
+import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
-import static org.bukkit.ChatColor.DARK_GRAY;
-import static org.bukkit.ChatColor.GREEN;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import static org.bukkit.ChatColor.*;
+import static org.bukkit.ChatColor.RED;
 
 public class KitSelectorMenu implements InventoryProvider {
 
     private final KitManager kitManager = KitManager.getInstance();
+    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
 
-    public static final SmartInventory INVENTORY = SmartInventory.builder()
-            .id("selector")
-            .manager(Uhcffa.instance().getManager())
-            .provider(new KitSelectorMenu())
-            .size(3, 9)
-            .title(DARK_GRAY + "Kit選択メニュー")
-            .closeable(true)
-            .build();
+    private final String playerID;
+    private final String toPlayerID;
+
+
+    public static final SmartInventory INVENTORY(String playerID, String toPlayerID) {
+        return SmartInventory.builder()
+                .id("selector")
+                .manager(Uhcffa.instance().getManager())
+                .provider(new KitSelectorMenu(playerID, toPlayerID))
+                .size(3, 9)
+                .title(PlayerConverter.getName(toPlayerID) + "にリクエストを送信")
+                .build();
+    }
+
+    public KitSelectorMenu(String playerID, String toPlayerID) {
+        this.playerID = playerID;
+        this.toPlayerID = toPlayerID;
+    }
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        Pagination pagination = contents.pagination();
         contents.fillBorders(ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE)));
+        ClickableItem[] items = new ClickableItem[kitManager.getKits().size()];
 
-        contents.set(1, 3, ClickableItem.of(
-                ItemStackBuilder.builder(Material.DIAMOND_SWORD)
-                        .setDisplayName(GREEN + "Normal Kit")
-                        .build(),
-                e -> NormalKitSelectorMenu.INVENTORY.open(player)));
+        for (int i = 0; i < kitManager.getKits().size(); i++) {
+            Kit kit = kitManager.getKits().stream().collect(Collectors.toList()).get(i);
 
-        contents.set(1, 5, ClickableItem.of(
-                ItemStackBuilder.builder(Material.BOW)
-                        .setDisplayName(GREEN + "Extra Kit")
-                        .build(),
-                e -> ExtraKitSelectorMenu.INVENTORY.open(player)));
+            items[i] = ClickableItem.of(
+                    ItemBuilder.of(Material.BUCKET).name("&a" + kit.getName().toUpperCase())
+                            .lore(
+                                    "&7Click to invite " + PlayerConverter.getName(toPlayerID) + " to",
+                                    "&7duel",
+                                    "",
+                                    "&eClick to play!",
+                                    "&7" + arenaManager.getArenas().values().stream()
+                                            .filter(arena1 -> {
+                                                if (arena1.getKit() == null)
+                                                    return false;
+                                                else if (arena1.getKit() == kit)
+                                                    return true;
+                                                return false;
+                                            }).count()
+                                            + " currently playing!")
+                            .build()
+                    , e -> {
+                        player.closeInventory();
+                        arenaManager.requestDuel(this.playerID, this.toPlayerID, kit);
+                    });
+        }
+
+        pagination.setItems(items);
+        pagination.setItemsPerPage(6);
+
+        pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 1).allowOverride(false));
     }
 
     @Override

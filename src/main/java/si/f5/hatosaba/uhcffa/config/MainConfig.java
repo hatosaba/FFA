@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import si.f5.hatosaba.uhcffa.utils.LocationUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,41 +33,16 @@ public class MainConfig extends Config {
         spawnPoints.clear();
 
         for (String spawnPoint : config.getStringList("spawnpoints")) {
-            String[] split = spawnPoint.split(":");
-            Location location = new Location(
-                    Bukkit.getWorld(split[0]),
-                    Double.valueOf(split[1]),
-                    Double.valueOf(split[2]),
-                    Double.valueOf(split[3]),
-                    Float.valueOf(split[4]),
-                    Float.valueOf(split[5])
-            );
+            Location location = LocationUtil.stringToLocation(spawnPoint);
             spawnPoints.add(location);
         }
 
         String locText = config.getString("editroom");
         String[] split = locText.split(":");
-        Location location = new Location(
-                Bukkit.getWorld(split[0]),
-                Double.valueOf(split[1]),
-                Double.valueOf(split[2]),
-                Double.valueOf(split[3]),
-                Float.valueOf(split[4]),
-                Float.valueOf(split[5])
-        );
-        this.location = location;
+        this.location = LocationUtil.stringToLocation(locText);
 
         String lobbyLocText = config.getString("lobby");
-        String[] splitLobby = lobbyLocText.split(":");
-        Location lobbyLoc = new Location(
-                Bukkit.getWorld(splitLobby[0]),
-                Double.valueOf(splitLobby[1]),
-                Double.valueOf(splitLobby[2]),
-                Double.valueOf(splitLobby[3]),
-                Float.valueOf(splitLobby[4]),
-                Float.valueOf(splitLobby[5])
-        );
-        this.lobby = lobbyLoc;
+        this.lobby = LocationUtil.stringToLocation(lobbyLocText);
 
         this.timeZone = config.getString("current-season.time-zone");
         this.resetTime = config.getString("current-season.reset-time");
@@ -78,47 +54,16 @@ public class MainConfig extends Config {
     public void saveAll() {
         FileConfiguration config = config();
         config.set("spawnpoints", spawnPoints.stream()
-                .map(loc ->
-                        loc.getWorld().getName() +
-                                ":" +
-                                loc.getX() +
-                                ":" +
-                                loc.getY() +
-                                ":" +
-                                loc.getZ() +
-                                ":" +
-                                loc.getYaw() +
-                                ":" +
-                                loc.getPitch()
+                .map(LocationUtil::locationToString
                         )
                 .collect(Collectors.toList()));
 
         config.set("editroom",
-                location.getWorld().getName() +
-                ":" +
-                location.getX() +
-                ":" +
-                location.getY() +
-                ":" +
-                location.getZ() +
-                ":" +
-                location.getYaw() +
-                ":" +
-                location.getPitch()
+                LocationUtil.locationToString(location)
         );
 
         config.set("lobby",
-                lobby.getWorld().getName() +
-                        ":" +
-                        lobby.getX() +
-                        ":" +
-                        lobby.getY() +
-                        ":" +
-                        lobby.getZ() +
-                        ":" +
-                        lobby.getYaw() +
-                        ":" +
-                        lobby.getPitch()
+                LocationUtil.locationToString(lobby)
         );
 
         update();

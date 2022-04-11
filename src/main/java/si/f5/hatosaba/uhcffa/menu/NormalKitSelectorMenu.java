@@ -4,53 +4,78 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import fr.minuskube.inv.content.Pagination;
+import fr.minuskube.inv.content.SlotIterator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.ArenaManager;
+import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
+import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import static org.bukkit.ChatColor.*;
 
 public class NormalKitSelectorMenu implements InventoryProvider {
 
     private final KitManager kitManager = KitManager.getInstance();
+    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
 
-    public static final SmartInventory INVENTORY = SmartInventory.builder()
-            .id("normal")
-            .manager(Uhcffa.instance().getManager())
-            .provider(new NormalKitSelectorMenu())
-            .size(3, 9)
-            .title(DARK_GRAY + "Normal Kit選択メニュー")
-            .closeable(true)
-            .build();
+    public static SmartInventory INVENTORY() {
+        return SmartInventory.builder()
+                .id("normal")
+                .manager(Uhcffa.instance().getManager())
+                .provider(new NormalKitSelectorMenu())
+                .size(6, 9)
+                .title("")
+                .build();
+    }
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        contents.fillBorders(ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE)));
+        Pagination pagination = contents.pagination();
+        contents.fillBorders(ClickableItem.empty(new ItemStack(Material.AIR)));
+        ClickableItem[] items = new ClickableItem[kitManager.getKits().size()];
 
-        contents.set(1, 3, ClickableItem.of(
-                ItemStackBuilder.builder(Material.DIAMOND_SWORD)
-                        .setDisplayName(GREEN + "Standard Kit")
-                        .addFlag(ItemFlag.HIDE_ATTRIBUTES)
-                        .build(),
-                e -> {
+        final String playerID = PlayerConverter.getID(player);
 
-                    kitManager.selectToKit(player, kitManager.getKit("standard"), false);
-                    player.closeInventory();
-                }));
+        for (int i = 0; i < kitManager.getKits().size(); i++) {
+            Kit kit = new ArrayList<>(kitManager.getKits()).get(i);
 
-        /*contents.set(1, 5, ClickableItem.of(
-                ItemStackBuilder.builder(Material.BOW)
-                        .setDisplayName(GREEN + "Archer Kit")
-                        .build(),
-                e -> {
-                    kitManager.selectToKit(player, kitManager.getKit("archer"), false);
+            items[i] = ClickableItem.of(
+                    ItemBuilder.of(Material.BUCKET).name("&a" + kit.getName().toUpperCase())
+                            .lore(
+                                    "",
+                                    "&eLeft Click to play",
+                                    "&7" + arenaManager.getArenas().values().stream()
+                                    .filter(arena1 -> {
+                                        if (arena1.getKit() == null)
+                                            return false;
+                                        else return arena1.getKit() == kit;
+                                    }).count()
+                            + " currently playing!")
+                            .build()
+                    , e -> {
+                        if (e.isLeftClick()) {
+                            player.closeInventory();
+                            arenaManager.joinMatch(playerID, kit);
+                        }
+                    });
+        }
 
-                    player.closeInventory();
-                }));*/
+        contents.set(5,4, ClickableItem.of(ItemBuilder.of(Material.BARRIER).build(), e -> player.closeInventory()));
+
+        pagination.setItems(items);
+        pagination.setItemsPerPage(6);
+
+        pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 1).allowOverride(false));
     }
 
     @Override

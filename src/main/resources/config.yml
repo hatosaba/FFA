@@ -1,6 +1,6 @@
 'spawnpoints': []
-'editroom': 'world:0:0:0:0:0'
-'lobby': 'world:0:0:0:0:0'
+'editroom': 'world:0:64:0:0:0'
+'lobby': 'world:0:64:0:0:0'
 
 current-season:
   time-zone: 'Asia/Tokyo' # The timezone for week releases to be based off.

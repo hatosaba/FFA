@@ -1,7 +1,5 @@
 package si.f5.hatosaba.uhcffa.sound;
 
-import org.bukkit.Sound;
-
 import static org.bukkit.Sound.*;
 
 public class SoundEffects {
@@ -16,7 +14,7 @@ public class SoundEffects {
 
     public static final SoundEffect CANCEL = new SoundEffect(DIG_STONE, 1f, 1.8f);
 
-    public static final SoundEffect FAILED = new SoundEffect(ANVIL_LAND, 0.7f, 1f);
+    public static final SoundEffect FAILED = new SoundEffect(ENDERMAN_TELEPORT, 0.7f, 0.5f);
 
     public static final SoundEffect BREAK = new SoundEffect(DIG_WOOD,1f, 1.8f);
 

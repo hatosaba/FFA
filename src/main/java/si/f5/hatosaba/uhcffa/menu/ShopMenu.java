@@ -29,7 +29,7 @@ public class ShopMenu implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
-        contents.set(1, 2, ClickableItem.of(
+/*        contents.set(1, 2, ClickableItem.of(
                 ItemStackBuilder.builder(Material.ANVIL)
                         .setDisplayName(GREEN + "FFA Kit編集")
                         .setLore(Arrays.asList(
@@ -38,9 +38,9 @@ public class ShopMenu implements InventoryProvider {
                                 YELLOW + "クリックして編集"
                         ))
                         .build(),
-                e -> EditKitSelectorMenu.INVENTORY.open(player)));
+                e -> EditKitSelectorMenu.INVENTORY.open(player)));*/
 
-        contents.set(1, 4, ClickableItem.of(
+        contents.set(1, 2, ClickableItem.of(
                 ItemStackBuilder.builder(Material.DIAMOND_SWORD)
                         .setDisplayName(GREEN + "化粧品")
                         .setLore(Arrays.asList(

@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Uhcffa</name>
+    <name>UhcFFA</name>
 
 
     <properties>
@@ -20,6 +20,9 @@
     </properties>
 
     <build>
+        <!--suppress UnresolvedMavenProperty -->
+        <finalName>${project.name}-Build-${project.version}-${git.commit.id.abbrev}</finalName>
+        <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -59,6 +62,14 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
                 <version>3.0.0</version>
@@ -74,6 +85,22 @@
                 <configuration>
                     <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                     <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>
@@ -102,6 +129,29 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>my</id>
+            <url>file://${basedir}/lib</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <layout>default</layout>
+        </repository>
+
+        <repository>
+            <id>lielamar-repo</id>
+            <url>https://api.lielamar.com/repository/maven-public/</url>
+        </repository>
+
+        <repository>
+            <id>everything</id>
+            <url>http://repo.citizensnpcs.co/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -122,10 +172,9 @@
             <version>2.18.2</version>
         </dependency>
         <dependency>
-            <groupId>com.vexsoftware</groupId>
-            <artifactId>nuvotifier</artifactId>
-            <version>2.5.3</version>
-            <scope>provided</scope>
+            <groupId>com.github.NuVotifier.NuVotifier</groupId>
+            <artifactId>nuvotifier-bukkit</artifactId>
+            <version>2.6.0</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
@@ -134,9 +183,63 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.kevinsawicki</groupId>
-            <artifactId>http-request</artifactId>
-            <version>6.0</version>
+            <groupId>com.github.tritonmc.Triton</groupId>
+            <artifactId>Triton</artifactId>
+            <version>v3.7.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>PvPLevels</groupId>
+            <artifactId>PvPLevels</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>craftbukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>8.7.1</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>spigotcommandlib</groupId>-->
+<!--            <artifactId>spigotcommandlib</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.lielamar</groupId>
+            <artifactId>LielsUtils</artifactId>
+            <version>1.6.31</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.citizensnpcs</groupId>
+            <artifactId>citizens-main</artifactId>
+            <version>2.0.28-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>xyz.xenondevs</groupId>
+            <artifactId>particle</artifactId>
+            <version>1.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

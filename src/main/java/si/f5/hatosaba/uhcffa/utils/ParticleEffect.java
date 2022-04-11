@@ -1259,17 +1259,17 @@ public enum ParticleEffect {
                 return;
             }
             try {
-                version = Integer.parseInt(Character.toString(ReflectionUtils.PackageType.getServerVersion().charAt(3)));
+                version = Integer.parseInt(Character.toString(ReflectionUtil.PackageType.getServerVersion().charAt(3)));
                 if (version > 7) {
-                    enumParticle = ReflectionUtils.PackageType.MINECRAFT_SERVER.getClass("EnumParticle");
+                    enumParticle = ReflectionUtil.PackageType.MINECRAFT_SERVER.getClass("EnumParticle");
                 }
-                Class<?> packetClass = ReflectionUtils.PackageType.MINECRAFT_SERVER.getClass(version < 7 ? "Packet63WorldParticles"
+                Class<?> packetClass = ReflectionUtil.PackageType.MINECRAFT_SERVER.getClass(version < 7 ? "Packet63WorldParticles"
                         : "PacketPlayOutWorldParticles");
-                packetConstructor = ReflectionUtils.getConstructor(packetClass);
-                getHandle = ReflectionUtils.getMethod("CraftPlayer", ReflectionUtils.PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
-                playerConnection = ReflectionUtils.getField("EntityPlayer", ReflectionUtils.PackageType.MINECRAFT_SERVER, false, "playerConnection");
-                sendPacket = ReflectionUtils.getMethod(playerConnection.getType(), "sendPacket",
-                        ReflectionUtils.PackageType.MINECRAFT_SERVER.getClass("Packet"));
+                packetConstructor = ReflectionUtil.getConstructor(packetClass);
+                getHandle = ReflectionUtil.getMethod("CraftPlayer", ReflectionUtil.PackageType.CRAFTBUKKIT_ENTITY, "getHandle");
+                playerConnection = ReflectionUtil.getField("EntityPlayer", ReflectionUtil.PackageType.MINECRAFT_SERVER, false, "playerConnection");
+                sendPacket = ReflectionUtil.getMethod(playerConnection.getType(), "sendPacket",
+                        ReflectionUtil.PackageType.MINECRAFT_SERVER.getClass("Packet"));
             } catch (Exception exception) {
                 throw new VersionIncompatibleException("Your current bukkit version seems to be incompatible with this library", exception);
             }
@@ -1308,24 +1308,24 @@ public enum ParticleEffect {
                     if (data != null) {
                         name += data.getPacketDataString();
                     }
-                    ReflectionUtils.setValue(packet, true, "a", name);
+                    ReflectionUtil.setValue(packet, true, "a", name);
                 } else {
-                    ReflectionUtils.setValue(packet, true, "a", enumParticle.getEnumConstants()[effect.getId()]);
-                    ReflectionUtils.setValue(packet, true, "j", longDistance);
+                    ReflectionUtil.setValue(packet, true, "a", enumParticle.getEnumConstants()[effect.getId()]);
+                    ReflectionUtil.setValue(packet, true, "j", longDistance);
                     if (data != null) {
                         int[] packetData = data.getPacketData();
-                        ReflectionUtils.setValue(packet, true, "k", effect == ParticleEffect.ITEM_CRACK ? packetData
+                        ReflectionUtil.setValue(packet, true, "k", effect == ParticleEffect.ITEM_CRACK ? packetData
                                 : new int[] { packetData[0] | (packetData[1] << 12) });
                     }
                 }
-                ReflectionUtils.setValue(packet, true, "b", (float) center.getX());
-                ReflectionUtils.setValue(packet, true, "c", (float) center.getY());
-                ReflectionUtils.setValue(packet, true, "d", (float) center.getZ());
-                ReflectionUtils.setValue(packet, true, "e", offsetX);
-                ReflectionUtils.setValue(packet, true, "f", offsetY);
-                ReflectionUtils.setValue(packet, true, "g", offsetZ);
-                ReflectionUtils.setValue(packet, true, "h", speed);
-                ReflectionUtils.setValue(packet, true, "i", amount);
+                ReflectionUtil.setValue(packet, true, "b", (float) center.getX());
+                ReflectionUtil.setValue(packet, true, "c", (float) center.getY());
+                ReflectionUtil.setValue(packet, true, "d", (float) center.getZ());
+                ReflectionUtil.setValue(packet, true, "e", offsetX);
+                ReflectionUtil.setValue(packet, true, "f", offsetY);
+                ReflectionUtil.setValue(packet, true, "g", offsetZ);
+                ReflectionUtil.setValue(packet, true, "h", speed);
+                ReflectionUtil.setValue(packet, true, "i", amount);
             } catch (Exception exception) {
                 throw new PacketInstantiationException("Packet instantiation failed", exception);
             }

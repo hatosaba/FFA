@@ -4,14 +4,19 @@ import net.ess3.api.MaxMoneyException;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.cosmetics.block.Blocks;
-import si.f5.hatosaba.uhcffa.scoreboard.ScoreboardBuilder;
+import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
+import si.f5.hatosaba.uhcffa.specialItem.ExecutableItemType;
 import si.f5.hatosaba.uhcffa.utils.Convertor;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
+import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 import si.f5.hatosaba.uhcffa.utils.yaml.Yaml;
 
 import java.io.IOException;
@@ -34,8 +39,6 @@ public class User {
     public final PurchasedEffect purchasedEffect;
 
     public final PurchasedTrail purchasedTrail;
-
-    public ScoreboardBuilder scoreboardBuilder;
 
     public User(Yaml yaml){
         //ファイル名に基づきUUIDを生成し代入する
@@ -71,10 +74,6 @@ public class User {
         }
     }
 
-    public Optional<ScoreboardBuilder> scoreboardBuilder(){
-        return Optional.of(scoreboardBuilder);
-    }
-
     public void saveKit(Player player) {
         if(KitManager.getInstance().isSelected(player)) {
             Map<String, ItemStack[]> contents = new HashMap<>();
@@ -90,13 +89,34 @@ public class User {
     public void apply(Kit kit) {
         asBukkitPlayer().getInventory().clear();
         asBukkitPlayer().setHealth(asBukkitPlayer().getMaxHealth());
-        ItemStack[] armors = this.kit.get(kit.getName()).get("armor");
-        ItemStack[] items = this.kit.get(kit.getName()).get("items");
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(asBukkitPlayer()));
 
-        if(armors != null)
-            asBukkitPlayer().getInventory().setArmorContents(armors);
-        if(items != null)
-            asBukkitPlayer().getInventory().setContents(items);
+        final CustomPlayer.Preset preset = customPlayer.getPreset();
+        if (preset == null) {
+            ItemStack[] armor = new ItemStack[4];
+            armor[0] = ItemBuilder.of(Material.IRON_BOOTS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+            armor[1] = ItemBuilder.of(Material.IRON_LEGGINGS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+            armor[2] = ItemBuilder.of(Material.DIAMOND_CHESTPLATE).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build();
+            armor[3] = ItemBuilder.of(Material.DIAMOND_HELMET).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+
+            asBukkitPlayer().getInventory().setArmorContents(armor);
+
+            final PlayerInventory inv = asBukkitPlayer().getInventory();
+
+            inv.setItem(0, ItemBuilder.of(Material.DIAMOND_SWORD).build());
+            inv.setItem(1, ItemBuilder.of(Material.FISHING_ROD).build());
+            inv.setItem(2, ItemBuilder.of(Material.BOW).build());
+            inv.setItem(3, ItemBuilder.of(Material.ARROW).amount(8).build());
+            ExecutableItemType.LIGHT_APPLE.setItem(4, asBukkitPlayer());
+            inv.setItem(8, ItemBuilder.of(Material.COBBLESTONE).amount(64).build());
+            ExecutableItemType.FFA_SHOP_ITEM.setItem(5, asBukkitPlayer());
+            ExecutableItemType.RESPAWN_ITEM.setItem(6, asBukkitPlayer());
+
+
+            customPlayer.setPreset();
+        } else {
+            preset.applyContent();
+        }
 
         for(int i = 0; i<asBukkitPlayer().getInventory().getSize()-1; ++i) {
             ItemStack item = asBukkitPlayer().getInventory().getItem(i);
@@ -110,6 +130,43 @@ public class User {
                 });
             }
         }
+
+        /*ItemStack[] armors = this.kit.get(kit.getName()).get("armor");
+        //ItemStack[] items = this.kit.get(kit.getName()).get("items");
+
+        *//*if(armors != null)
+            asBukkitPlayer().getInventory().setArmorContents(armors);*//*
+        ItemStack[] armor = new ItemStack[4];
+        armor[0] = ItemBuilder.of(Material.IRON_BOOTS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+        armor[1] = ItemBuilder.of(Material.IRON_LEGGINGS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+        armor[2] = ItemBuilder.of(Material.DIAMOND_CHESTPLATE).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build();
+        armor[3] = ItemBuilder.of(Material.DIAMOND_HELMET).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+
+        asBukkitPlayer().getInventory().setArmorContents(armor);
+        *//*if(items != null)
+            asBukkitPlayer().getInventory().setContents(items);*//*
+
+        final PlayerInventory inv = asBukkitPlayer().getInventory();
+
+        inv.setItem(0, ItemBuilder.of(Material.DIAMOND_SWORD).build());
+        inv.setItem(1, ItemBuilder.of(Material.FISHING_ROD).build());
+        inv.setItem(2, ItemBuilder.of(Material.BOW).build());
+        inv.setItem(3, ItemBuilder.of(Material.ARROW).amount(8).build());
+        inv.setItem(4, ExecutableItemType.LIGHT_APPLE.getItem());
+        inv.setItem(8, ItemBuilder.of(Material.COBBLESTONE).amount(64).build());
+
+        for(int i = 0; i<asBukkitPlayer().getInventory().getSize()-1; ++i) {
+            ItemStack item = asBukkitPlayer().getInventory().getItem(i);
+            if(item == null) continue;
+            if(item.getType().equals(Material.COBBLESTONE)) {
+                int finalI = i;
+                Blocks.BLOCKS.stream().filter(kit1 -> kit1.item.isSimilar(blockItem)).forEach(kit1 -> {
+                    ItemStack block = kit1.item.clone();
+                    block.setAmount(64);
+                    asBukkitPlayer().getInventory().setItem(finalI, block);
+                });
+            }
+        }*/
     }
 
     public boolean isEditedKit(String kitName) {

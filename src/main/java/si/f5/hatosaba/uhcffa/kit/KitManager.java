@@ -2,17 +2,25 @@ package si.f5.hatosaba.uhcffa.kit;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
-import si.f5.hatosaba.uhcffa.Constants;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.Arena;
+import si.f5.hatosaba.uhcffa.cosmetics.block.Blocks;
+import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.schedule.Sync;
+import si.f5.hatosaba.uhcffa.specialItem.ExecutableItemType;
 import si.f5.hatosaba.uhcffa.spectetor.SpectetorSet;
 import si.f5.hatosaba.uhcffa.user.User;
 import si.f5.hatosaba.uhcffa.user.UserSet;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
+import si.f5.hatosaba.uhcffa.utils.LocationUtil;
+import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 import si.f5.hatosaba.uhcffa.utils.yaml.Yaml;
 
 import java.io.File;
@@ -76,6 +84,21 @@ public class KitManager {
 
     }
 
+    public void registerKit(Kit kit){
+        final String kitName = kit.getName();
+        //既にアリーナデータが存在するのであれば戻る
+        if(kits.containsKey(kitName)) return;
+        //アリーナデータコンフィグ作成する
+        makeYaml(kitName);
+        //登録する
+        kits.put(kit.getName(), kit);
+    }
+
+    public void removeKit(String kitName) {
+        makeYaml(kitName).file.delete();
+        kits.remove(kitName);
+    }
+
     public void saveAll(){
         kits.values().forEach(Kit::save);
     }
@@ -101,45 +124,82 @@ public class KitManager {
 
         player.setHealth(player.getMaxHealth());
 
-        if(!isEdit) {
+        /*if(!isEdit) {
             if (user.isEditedKit(kit.getName())) {
-                Sync.define(() -> user.apply(kit)).executeLater(1 * 20);
+                Sync.define(() -> user.apply(kit)).execute();
             } else {
-                Sync.define(() -> kit.apply(player)).executeLater(1 * 20);
+                Sync.define(() -> kit.apply(player)).execute();
             }
-        }
+        }*/
         selectedPlayer.put(player, kit);
 
         if(isEdit) {
-            Sync.define(() -> kit.apply(player)).executeLater(1 * 20);
+            Sync.define(() -> kit.apply(player)).execute();
             player.teleport(Uhcffa.instance().config().getLocation());
             player.sendMessage("/kitsaveでキットを保存できます");
         } else {
             player.setAllowFlight(false);
-//            ScoreboardBuilder statusBoard = user.scoreboardBuilder != null ? user.scoreboardBuilder : new ScoreboardBuilder(user);
-//            statusBoard.loadScoreboard();
             Sync.define(() -> {
+                CustomPlayer customPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(player));
+
+                final CustomPlayer.Preset preset = customPlayer.getPreset();
+                if (preset == null) {
+                    ItemStack[] armor = new ItemStack[4];
+
+                    armor[0] = ItemBuilder.of(Material.IRON_BOOTS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+                    armor[1] = ItemBuilder.of(Material.IRON_LEGGINGS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+                    armor[2] = ItemBuilder.of(Material.DIAMOND_CHESTPLATE).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build();
+                    armor[3] = ItemBuilder.of(Material.DIAMOND_HELMET).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
+
+                    inv.setArmorContents(armor);
+
+                    inv.setItem(0, ItemBuilder.of(Material.DIAMOND_SWORD).build());
+                    inv.setItem(1, ItemBuilder.of(Material.FISHING_ROD).build());
+                    inv.setItem(2, ItemBuilder.of(Material.BOW).build());
+                    inv.setItem(3, ItemBuilder.of(Material.ARROW).amount(8).build());
+                    ExecutableItemType.LIGHT_APPLE.setItem(4, player);
+                    inv.setItem(8, ItemBuilder.of(Material.COBBLESTONE).amount(64).build());
+                    ExecutableItemType.FFA_SHOP_ITEM.setItem(5,player);
+                    ExecutableItemType.RESPAWN_ITEM.setItem(6,player);
+
+                    customPlayer.setPreset();
+                } else {
+                    preset.applyContent();
+                }
+
+                for(int i = 0; i< player.getInventory().getSize()-1; ++i) {
+                    ItemStack item = player.getInventory().getItem(i);
+                    if(item == null) continue;
+                    if(item.getType().equals(Material.COBBLESTONE)) {
+                        int finalI = i;
+                        Blocks.BLOCKS.stream().filter(kit1 -> kit1.item == user.blockItem).forEach(kit1 -> {
+                            ItemStack block = kit1.item.clone();
+                            if (block.hasItemMeta()) {
+                                ItemMeta im = block.getItemMeta();
+                                if (im.hasLore())
+                                    im.setLore(new ArrayList<>());
+                                if (im.hasDisplayName())
+                                    im.setDisplayName("");
+                                block.setItemMeta(im);
+                            }
+                            block.setAmount(64);
+                            player.getInventory().setItem(finalI, block);
+                        });
+                    }
+                }
+
                 player.teleport(Uhcffa.instance().config().getSpawnPoints().stream().skip((new Random()).nextInt(Uhcffa.instance().config().getSpawnPoints().size())).findFirst().get());
                 spectetorSet.applyShowMode(player);
-                tryGivingRespawnItemsTo(player);
             }).executeLater(2*20);
         }
         player.setGameMode(GameMode.SURVIVAL);
-        player.sendMessage(kit.getName() + "を選択しました");
-    }
-
-    private void tryGivingRespawnItemsTo(Player player) {
-        tryGivingItemTo(player, Constants.RESPAWN_ITEM);
-    }
-
-    private void tryGivingItemTo(Player player, ItemStack item) {
-        Inventory inventory = player.getInventory();
-        if (!inventory.contains(item)) inventory.addItem(item);
+        player.sendMessage("FFAに参加しました");
     }
 
     public Collection<Kit> getKits(){
         return kits.values();
     }
+
 
     public Kit getKit(String kitName){
         return kits.get(kitName);
@@ -147,6 +207,10 @@ public class KitManager {
 
     public HashMap<Player, Kit> getSelectedPlayer() {
         return selectedPlayer;
+    }
+
+    public void removeSelectedKit(Player player) {
+        selectedPlayer.remove(player);
     }
 
     public HashSet<Player> getCooldownPlayers() {
