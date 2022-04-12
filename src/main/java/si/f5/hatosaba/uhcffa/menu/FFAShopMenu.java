@@ -24,7 +24,7 @@ public class FFAShopMenu implements InventoryProvider {
 
     public static final SmartInventory INVENTORY = SmartInventory.builder()
             .id("ffashop")
-            .manager(Uhcffa.instance().getManager())
+            .manager(Uhcffa.getInstance().getManager())
             .provider(new FFAShopMenu())
             .size(6, 9)
             .title(GREEN + "ショップ")

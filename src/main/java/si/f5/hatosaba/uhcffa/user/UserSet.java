@@ -22,7 +22,7 @@ public class UserSet {
         return instance;
     }
 
-    private final Uhcffa plugin = Uhcffa.instance();
+    private final Uhcffa plugin = Uhcffa.getInstance();
 
     //ユーザーデータを保存するフォルダー
     public final File folder = new File(plugin.getDataFolder() + File.separator + "Users");

@@ -17,7 +17,7 @@ import java.util.*;
 
 public class ArenaManager {
 
-    private final Uhcffa plugin = Uhcffa.instance();
+    private final Uhcffa plugin = Uhcffa.getInstance();
     //アリーナデータを保存するフォルダー
     public final File folder = new File(plugin.getDataFolder() + File.separator + "Arenas");
 

@@ -28,10 +28,18 @@ public class Translated {
     }
 
     public String get(Player player) {
-        return languageManager.getText(triton.getPlayerManager().get(player.getUniqueId()), key, args);
+        if (args == null)
+            return languageManager.getText(triton.getPlayerManager().get(player.getUniqueId()), key);
+        else
+            return languageManager.getText(triton.getPlayerManager().get(player.getUniqueId()), key, args);
+
     }
 
     public String get(String playerID) {
-        return languageManager.getText(triton.getPlayerManager().get(UUID.fromString(playerID)), key, args);
+        final Player player = PlayerConverter.getPlayer(playerID);
+        if (args == null)
+            return languageManager.getText(triton.getPlayerManager().get(player.getUniqueId()), key);
+        else
+            return languageManager.getText(triton.getPlayerManager().get(player.getUniqueId()), key, args);
     }
 }

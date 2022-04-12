@@ -22,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.Arena;
+import si.f5.hatosaba.uhcffa.arena.ArenaState;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.specialItem.executableItem.ffa.FlaskOfCleansing;
 import si.f5.hatosaba.uhcffa.spectetor.SpectetorSet;
@@ -204,9 +206,12 @@ public class PlayerListener implements Listener {
         String playerId = PlayerConverter.getID(player);
         CustomPlayer customPlayer = Uhcffa.getCustomPlayer(playerId);
 
-        if (customPlayer.inArena()) return;
+        if (customPlayer.inArena()) {
+            Arena arena = customPlayer.getArena();
+            if (arena.getState() == ArenaState.COUNTING_DOWN || arena.getState() == ArenaState.GAME_END) event.setCancelled(true);
+        }
 
-        if (player.getGameMode() != GameMode.SURVIVAL) return;
+        if (player.getGameMode() == GameMode.CREATIVE) return;
 
         if(spectetorSet.isHideMode(player))
             event.setCancelled(true);

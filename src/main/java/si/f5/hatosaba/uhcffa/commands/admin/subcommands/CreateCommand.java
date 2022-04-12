@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CreateCommand extends StandaloneCommand {
 
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     private final Uhcffa plugin;
     private final SuperCommand parent;

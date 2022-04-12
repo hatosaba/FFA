@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class SetUpCommand extends StandaloneCommand {
 
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     private final Uhcffa plugin;
     private final SuperCommand parent;
@@ -42,7 +42,7 @@ public class SetUpCommand extends StandaloneCommand {
         final CustomPlayer customPlayer = Uhcffa.getCustomPlayer(playerID);
 
         if(args.length == 0) {
-            player.sendMessage("足りない");
+            player.sendMessage("specify.duel.name");
             return false;
         }
 

@@ -11,15 +11,15 @@ public interface Sync extends Runnable {
     }
 
     public default void execute(){
-        Bukkit.getScheduler().runTask(Uhcffa.instance(), this);
+        Bukkit.getScheduler().runTask(Uhcffa.getInstance(), this);
     }
 
     public default void executeLater(long delay){
-        Bukkit.getScheduler().runTaskLater(Uhcffa.instance(), this, delay);
+        Bukkit.getScheduler().runTaskLater(Uhcffa.getInstance(), this, delay);
     }
 
     public default BukkitTask executeTimer(long period, long delay){
-        return Bukkit.getScheduler().runTaskTimer(Uhcffa.instance(), this, period, delay);
+        return Bukkit.getScheduler().runTaskTimer(Uhcffa.getInstance(), this, period, delay);
     }
 
     public default BukkitTask executeTimer(long interval){

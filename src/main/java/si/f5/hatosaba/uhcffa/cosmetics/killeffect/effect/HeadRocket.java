@@ -87,6 +87,6 @@ public class HeadRocket extends KillEffect {
             }
 
         };
-        runnable.runTaskTimer(Uhcffa.instance(), 1, 1);
+        runnable.runTaskTimer(Uhcffa.getInstance(), 1, 1);
     }
 }

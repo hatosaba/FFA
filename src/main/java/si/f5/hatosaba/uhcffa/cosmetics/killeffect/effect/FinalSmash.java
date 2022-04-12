@@ -123,13 +123,13 @@ public class FinalSmash extends KillEffect {
                         fm.addEffect(FireworkEffect.builder().flicker(true).trail(true).with(Type.BALL_LARGE).withColor(Color.RED)
                                 .withFade(Color.RED).build());
                         fw.setFireworkMeta(fm);
-                        Bukkit.getScheduler().runTaskLater(Uhcffa.instance(), () -> fw.detonate(), 1L);
+                        Bukkit.getScheduler().runTaskLater(Uhcffa.getInstance(), () -> fw.detonate(), 1L);
                         cancel();
                     }
                 }
             }
 
         };
-        runnable.runTaskTimer(Uhcffa.instance(), 1, 1);
+        runnable.runTaskTimer(Uhcffa.getInstance(), 1, 1);
     }
 }

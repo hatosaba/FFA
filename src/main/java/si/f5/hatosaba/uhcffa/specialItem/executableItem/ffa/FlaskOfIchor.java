@@ -1,9 +1,6 @@
 package si.f5.hatosaba.uhcffa.specialItem.executableItem.ffa;
 
 import org.bukkit.Material;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.Potion;

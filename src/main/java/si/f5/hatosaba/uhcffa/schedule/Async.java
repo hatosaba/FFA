@@ -12,15 +12,15 @@ public interface Async extends Runnable {
     }
 
     public default BukkitTask execute(){
-        return Bukkit.getScheduler().runTaskAsynchronously(Uhcffa.instance(), this);
+        return Bukkit.getScheduler().runTaskAsynchronously(Uhcffa.getInstance(), this);
     }
 
     public default BukkitTask executeLater(long delay){
-        return Bukkit.getScheduler().runTaskLaterAsynchronously(Uhcffa.instance(), this, delay);
+        return Bukkit.getScheduler().runTaskLaterAsynchronously(Uhcffa.getInstance(), this, delay);
     }
 
     public default BukkitTask executeTimer(long period, long delay) {
-        return Bukkit.getScheduler().runTaskTimer(Uhcffa.instance(), this, period, delay);
+        return Bukkit.getScheduler().runTaskTimer(Uhcffa.getInstance(), this, period, delay);
     }
 
     public default BukkitTask executeTimer(long interval){
@@ -28,7 +28,7 @@ public interface Async extends Runnable {
     }
 
     /*public default BukkitTask executeTimer(long period, long delay){
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(Uhcffa.instance(), this, period, delay);
+        return Bukkit.getScheduler().runTaskTimerAsynchronously(Uhcffa.getInstance(), this, period, delay);
     }
 
     public default BukkitTask executeTimer(long interval){

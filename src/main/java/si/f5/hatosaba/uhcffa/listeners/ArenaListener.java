@@ -40,23 +40,21 @@ public class ArenaListener implements Listener {
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS) {
+            if (player.getGameMode() == GameMode.CREATIVE) return;
+
+            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS ||arena.getState() == ArenaState.IN_GAME) {
                 if (event.getTo().getY() <= 0) {
                     player.teleport(arena.getSpawn1());
-                }
-            }
-            if (arena.getState() == ArenaState.IN_GAME) {
-                if (event.getTo().getY() <= 0) {
-                    player.teleport(arena.getSpawn1());
-                    arena.endGame();
                 }
             }
         } else {
+            if (player.getGameMode() == GameMode.CREATIVE) return;
+
             if (event.getTo().getY() <= 0) {
-                player.teleport(Uhcffa.instance().config().getLobby());
+                player.teleport(Uhcffa.getInstance().config().getLobby());
             }
         }
     }
@@ -65,14 +63,14 @@ public class ArenaListener implements Listener {
     public void onPlayerDeathEvent(PlayerDeathEvent event) {
         final Player player = event.getEntity();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
             if (arena.getState() == ArenaState.IN_GAME) {
+                arena.onDeath(playerID);
                 event.setDeathMessage(null);
                 player.setHealth(player.getMaxHealth());
-                arena.onDeath(playerID);
                 event.getDrops().clear();
             }
         }
@@ -82,7 +80,7 @@ public class ArenaListener implements Listener {
     public void pvpLevels(PlayerKillEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) {
             event.setCancelled(true);
@@ -93,7 +91,7 @@ public class ArenaListener implements Listener {
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
@@ -106,6 +104,7 @@ public class ArenaListener implements Listener {
             if (arena.getState() == ArenaState.IN_GAME) {
                 double max_build_y = arena.getMaxBuildY();
                 if (event.getBlockPlaced().getLocation().getBlockY() >= max_build_y) {
+                    customPlayer.sendTranslated("arena.max-build-y");
                     //player.sendMessage(Duel.getMessageConfig().getString("arenas.max-build-y"));
                     event.setCancelled(true);
                 }
@@ -117,7 +116,7 @@ public class ArenaListener implements Listener {
     public void onBlockBreakEvent(BlockBreakEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
@@ -127,6 +126,7 @@ public class ArenaListener implements Listener {
                 Block block = event.getBlock();
                 if (!arena.getPlaced().contains(block)) {
                     event.setCancelled(true);
+                    customPlayer.sendTranslated("arena.own-break");
                     //player.sendMessage(Duel.getMessageConfig().getString("arenas.own-break"));
                     return;
                 }
@@ -166,7 +166,7 @@ public class ArenaListener implements Listener {
     public void onPlayerBucketFillEvent(PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
@@ -193,7 +193,7 @@ public class ArenaListener implements Listener {
     public void onPlayerBucketEmptyEvent(PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
@@ -228,7 +228,7 @@ public class ArenaListener implements Listener {
     public void onPlayerPickupItemEvent(PlayerPickupItemEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.getSetupData() != null) {
             ItemStack itemStack = event.getItem().getItemStack();
@@ -258,7 +258,7 @@ public class ArenaListener implements Listener {
     public void onPlayerDropItemEvent(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.getSetupData() != null) {
             ItemStack itemStack = event.getItemDrop().getItemStack();
@@ -284,29 +284,11 @@ public class ArenaListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamageEvent(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            final String playerID = PlayerConverter.getID(player);
-            final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
-
-            if (!customPlayer.inArena()) {
-                event.setCancelled(true);
-            } else if (customPlayer.inArena()) {
-                Arena arena = customPlayer.getArena();
-                if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS || arena.getState() == ArenaState.COUNTING_DOWN || arena.getState() == ArenaState.GAME_END) {
-                    event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();
             final String playerID = PlayerConverter.getID(player);
-            final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+            final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
             if (customPlayer.inArena()) {
                 Arena arena = customPlayer.getArena();
@@ -316,7 +298,7 @@ public class ArenaListener implements Listener {
                 if (event.getEntity() instanceof Player) {
                     Player target = (Player) event.getEntity();
                     final String targetPlayerID = PlayerConverter.getID(target);
-                    final CustomPlayer targetCustomPlayer = Uhcffa.instance().getCustomPlayer(targetPlayerID);
+                    final CustomPlayer targetCustomPlayer = Uhcffa.getInstance().getCustomPlayer(targetPlayerID);
                     if (targetCustomPlayer.inArena()) {
                         Arena targetArena = targetCustomPlayer.getArena();
                         if (targetArena.getState() != ArenaState.IN_GAME) {
@@ -328,6 +310,4 @@ public class ArenaListener implements Listener {
             }
         }
     }
-
-
 }

@@ -10,16 +10,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
-import si.f5.hatosaba.uhcffa.cosmetics.killeffect.Effect;
-import si.f5.hatosaba.uhcffa.cosmetics.killeffect.Effects;
 import si.f5.hatosaba.uhcffa.cosmetics.trail.Trail;
 import si.f5.hatosaba.uhcffa.cosmetics.trail.Trails;
 import si.f5.hatosaba.uhcffa.sound.SoundEffects;
-import si.f5.hatosaba.uhcffa.user.PurchasedEffect;
 import si.f5.hatosaba.uhcffa.user.PurchasedTrail;
 import si.f5.hatosaba.uhcffa.user.User;
 import si.f5.hatosaba.uhcffa.user.UserSet;
-import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +29,7 @@ public class TrailMenu implements InventoryProvider {
 
     public static final SmartInventory INVENTORY = SmartInventory.builder()
             .id("trail")
-            .manager(Uhcffa.instance().getManager())
+            .manager(Uhcffa.getInstance().getManager())
             .provider(new TrailMenu())
             .size(6, 9)
             .title(DARK_GRAY + "Trail")
@@ -53,12 +50,14 @@ public class TrailMenu implements InventoryProvider {
             Trail item = trails.get(i);
 
             items[i] = ClickableItem.of(
-                    ItemStackBuilder.createItem(item.item.clone(),GREEN + item.name,
-                            Arrays.asList(
+                    ItemBuilder.modify(item.item.clone())
+                            .name(item.name)
+                            .lore(Arrays.asList(
                                     DARK_GRAY + "エフェクト",
                                     purchasedTrail.has(item) ? "" : GRAY + "コスト: "+ GOLD + item.value,
                                     purchasedTrail.has(item) ? (user.purchasedTrail.isSelected(item) ?  GREEN + "選択済み" : YELLOW + "クリックして選択") : RED + "購入する"
                             ))
+                            .build()
                     , e -> {
                         if(!user.purchasedTrail.isSelected(item) ) {
                             if (purchasedTrail.has(item)) {
@@ -86,33 +85,33 @@ public class TrailMenu implements InventoryProvider {
 
         if(!pagination.isFirst()) {
             contents.set(5, 0, ClickableItem.of(
-                    ItemStackBuilder.builder(Material.ARROW)
-                            .setDisplayName(GREEN + "前のページへ")
+                    ItemBuilder.of(Material.ARROW)
+                            .name(GREEN + "前のページへ")
                             .build(),
                     e -> INVENTORY.open(player, pagination.previous().getPage())));
         }
 
         if(!pagination.isLast()) {
             contents.set(5, 8, ClickableItem.of(
-                    ItemStackBuilder.builder(Material.ARROW)
-                            .setDisplayName(GREEN + "次のページへ")
+                    ItemBuilder.of(Material.ARROW)
+                            .name(GREEN + "次のページへ")
                             .build(),
                     e -> INVENTORY.open(player, pagination.next().getPage())));
         }
 
         contents.set(5, 3, ClickableItem.of(
-                ItemStackBuilder.builder(Material.ARROW)
-                        .setDisplayName(GRAY + "戻る")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.ARROW)
+                        .name(GRAY + "戻る")
+                        .lore(Arrays.asList(
                                 GRAY + "化粧品へ"
                         ))
                         .build(),
                 e -> MyCosmeticsMenu.INVENTORY.open(player)));
 
         contents.set(5, 4, ClickableItem.of(
-                ItemStackBuilder.builder(Material.EMERALD)
-                        .setDisplayName(GRAY + "統計コイン:" + YELLOW + UserSet.getInstnace().getUser(player).coins())
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.EMERALD)
+                        .name(GRAY + "統計コイン:" + YELLOW + UserSet.getInstnace().getUser(player).coins())
+                        .lore(Arrays.asList(
                                 GRAY + "投票してコインを多く受け取る",
                                 GOLD + "https://hatosaba.f5.si/jms"
                         ))

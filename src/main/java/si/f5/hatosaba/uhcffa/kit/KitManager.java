@@ -40,7 +40,7 @@ public class KitManager {
 
     private final HashSet<Player> cooldownPlayers = new HashSet<>();
 
-    private final Uhcffa plugin = Uhcffa.instance();
+    private final Uhcffa plugin = Uhcffa.getInstance();
 
     private final SpectetorSet spectetorSet = SpectetorSet.getInstance();
 
@@ -121,7 +121,7 @@ public class KitManager {
         for (PotionEffect effect : player.getActivePotionEffects()) {
             player.removePotionEffect(effect.getType());
         }
-
+        player.setMaxHealth(40);
         player.setHealth(player.getMaxHealth());
 
         /*if(!isEdit) {
@@ -135,12 +135,13 @@ public class KitManager {
 
         if(isEdit) {
             Sync.define(() -> kit.apply(player)).execute();
-            player.teleport(Uhcffa.instance().config().getLocation());
+            player.teleport(Uhcffa.getInstance().config().getLocation());
             player.sendMessage("/kitsaveでキットを保存できます");
         } else {
             player.setAllowFlight(false);
             Sync.define(() -> {
                 CustomPlayer customPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(player));
+                customPlayer.cancelRequest();
 
                 final CustomPlayer.Preset preset = customPlayer.getPreset();
                 if (preset == null) {
@@ -188,12 +189,12 @@ public class KitManager {
                     }
                 }
 
-                player.teleport(Uhcffa.instance().config().getSpawnPoints().stream().skip((new Random()).nextInt(Uhcffa.instance().config().getSpawnPoints().size())).findFirst().get());
+                player.teleport(Uhcffa.getInstance().config().getSpawnPoints().stream().skip((new Random()).nextInt(Uhcffa.getInstance().config().getSpawnPoints().size())).findFirst().get());
                 spectetorSet.applyShowMode(player);
             }).executeLater(2*20);
         }
         player.setGameMode(GameMode.SURVIVAL);
-        player.sendMessage("FFAに参加しました");
+        Uhcffa.getCustomPlayer(player).sendTranslated("ffa.join");
     }
 
     public Collection<Kit> getKits(){

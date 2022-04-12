@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class UpdateSidebar extends AsyncTask {
 
-    private final Uhcffa uhcffa = Uhcffa.instance();
+    private final Uhcffa uhcffa = Uhcffa.getInstance();
 
     public UpdateSidebar() {
         super(1);

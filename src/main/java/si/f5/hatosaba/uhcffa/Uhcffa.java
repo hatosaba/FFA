@@ -85,7 +85,7 @@ public final class Uhcffa extends JavaPlugin {
         Sync.define(() -> Bukkit.getOnlinePlayers().forEach(player -> {
             SpectetorSet.getInstance().onPlayerJoin(player);
             UserSet.getInstnace().registerUser(player);
-            player.teleport(Uhcffa.instance().config().getLobby());
+            player.teleport(config().getLobby());
             player.setMaxHealth(40);
             player.setHealth(player.getMaxHealth());
             player.sendMessage(new String[]{
@@ -199,7 +199,7 @@ public final class Uhcffa extends JavaPlugin {
         PlayerPlaceBlock.removeBlocks();
     }
 
-    public static Uhcffa instance() {
+    public static Uhcffa getInstance() {
         return instance;
     }
 
@@ -261,7 +261,7 @@ public final class Uhcffa extends JavaPlugin {
     }
 
     public static CustomPlayer getCustomPlayer(CommandSender sender) {
-        return getCustomPlayer(PlayerConverter.getID(PlayerConverter.getID((Player) sender)));
+        return getCustomPlayer(PlayerConverter.getID((Player) sender));
     }
 
     public static void removePlayerData(final String playerID) {
@@ -281,7 +281,7 @@ public final class Uhcffa extends JavaPlugin {
         }
         player.setAllowFlight(true);
         player.setFlying(true);
-        Uhcffa.instance().setLobbyItem(player);
+        setLobbyItem(player);
         SpectetorSet.getInstance().applyHideMode(player);
     }
 

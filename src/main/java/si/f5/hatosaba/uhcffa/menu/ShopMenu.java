@@ -10,7 +10,8 @@ import org.bukkit.inventory.ItemFlag;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.menu.cosmetics.MyCosmeticsMenu;
 import si.f5.hatosaba.uhcffa.user.UserSet;
-import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
+import si.f5.hatosaba.uhcffa.utils.Translated;
 
 import java.util.Arrays;
 
@@ -18,14 +19,22 @@ import static org.bukkit.ChatColor.*;
 
 public class ShopMenu implements InventoryProvider {
 
-    public static final SmartInventory INVENTORY = SmartInventory.builder()
-            .id("shop")
-            .manager(Uhcffa.instance().getManager())
-            .provider(new ShopMenu())
-            .size(3, 9)
-            .title(GREEN + "ショップ")
-            .closeable(true)
-            .build();
+    private final Player player;
+
+    public ShopMenu(Player player) {
+        this.player = player;
+    }
+
+    public static final SmartInventory INVENTORY(Player player) {
+        return SmartInventory.builder()
+                .id("shop")
+                .manager(Uhcffa.getInstance().getManager())
+                .provider(new ShopMenu(player))
+                .size(3, 9)
+                .title(Translated.key("gui.cosmetics").get(player))
+                .closeable(true)
+                .build();
+    }
 
     @Override
     public void init(Player player, InventoryContents contents) {
@@ -41,24 +50,24 @@ public class ShopMenu implements InventoryProvider {
                 e -> EditKitSelectorMenu.INVENTORY.open(player)));*/
 
         contents.set(1, 2, ClickableItem.of(
-                ItemStackBuilder.builder(Material.DIAMOND_SWORD)
-                        .setDisplayName(GREEN + "化粧品")
-                        .setLore(Arrays.asList(
-                                GRAY + "ゲーム内で入手可能なFFA用化粧品を",
-                                GRAY + "すべて閲覧し、装備することができます。",
+                ItemBuilder.of(Material.DIAMOND_SWORD)
+                        .name(Translated.key("gui.cosmetics").get(player))
+                        .lore(Arrays.asList(
+                                Translated.key("gui.cosmetics.1").get(player),
+                                Translated.key("gui.cosmetics.2").get(player),
                                 "",
-                                YELLOW + "クリックして化粧品を閲覧"
+                                Translated.key("gui.cosmetics.click").get(player)
                         ))
-                        .addFlag(ItemFlag.HIDE_ATTRIBUTES)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .build(),
                 e -> MyCosmeticsMenu.INVENTORY.open(player)));
 
         contents.set(1, 6, ClickableItem.of(
-                ItemStackBuilder.builder(Material.EMERALD)
-                        .setDisplayName(GRAY + "統計コイン:" + YELLOW + UserSet.getInstnace().getUser(player).coins())
-                        .setLore(Arrays.asList(
-                                GRAY + "投票してコインを多く受け取る",
-                                GOLD + "https://hatosaba.f5.si/jms"
+                ItemBuilder.of(Material.EMERALD)
+                        .name(Translated.key("gui.cosmetics").get(player))
+                        .lore(Arrays.asList(
+                                Translated.key("gui.vote.1").get(player),
+                                Translated.key("gui.vote.2").get(player)
                         ))
                         .build(),
                 e -> {}));

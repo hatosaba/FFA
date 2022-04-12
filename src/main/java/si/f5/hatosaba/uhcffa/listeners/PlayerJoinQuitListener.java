@@ -44,7 +44,7 @@ public class PlayerJoinQuitListener implements Listener {
             return;
         }
         final String playerID = event.getUniqueId().toString();
-        final Uhcffa plugin = Uhcffa.instance();
+        final Uhcffa plugin = Uhcffa.getInstance();
         Uhcffa.putCustomPlayer(playerID, new CustomPlayer(playerID));
     }
 
@@ -74,7 +74,7 @@ public class PlayerJoinQuitListener implements Listener {
             player.sendMessage("途中で抜けたので戦場にスポーンしました");
             spectetorSet.applyShowMode(player);
         } else {
-            player.teleport(Uhcffa.instance().config().getLobby());
+            player.teleport(Uhcffa.getInstance().config().getLobby());
 
             PlayerInventory inv = player.getInventory();
             inv.clear();
@@ -92,7 +92,7 @@ public class PlayerJoinQuitListener implements Listener {
             player.setFoodLevel(20);
             player.setFireTicks(0);
 
-            Uhcffa.instance().setLobbyItem(player);
+            Uhcffa.getInstance().setLobbyItem(player);
 
             if (player.getGameMode() == GameMode.SURVIVAL) {
                 player.setAllowFlight(false);
@@ -109,7 +109,7 @@ public class PlayerJoinQuitListener implements Listener {
         });
 
         // Injecting to the scoreboard
-        Uhcffa.instance().getScoreboardManager().injectPlayer(player);
+        Uhcffa.getInstance().getScoreboardManager().injectPlayer(player);
     }
 
     private final KitManager kitManager = KitManager.getInstance();
@@ -140,7 +140,7 @@ public class PlayerJoinQuitListener implements Listener {
 
         spectetorSet.onPlayerQuit(player);
 
-        Uhcffa.instance().getScoreboardManager().ejectPlayer(player);
+        Uhcffa.getInstance().getScoreboardManager().ejectPlayer(player);
     }
 
     @EventHandler

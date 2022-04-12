@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 
 public abstract class Config {
 
-    protected final Uhcffa plugin = Uhcffa.instance();
+    protected final Uhcffa plugin = Uhcffa.getInstance();
     private FileConfiguration config;
     private final File file;
     private final String name;

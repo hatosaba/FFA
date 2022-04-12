@@ -83,9 +83,9 @@ public class PlayerRespawnListener implements Listener {
 
     private void tryGivingDefaultItemsTo(Player player) {
         if (KitManager.getInstance().isSelected(player)) {
-            Uhcffa.instance().setSpectatorItem(player);
+            Uhcffa.getInstance().setSpectatorItem(player);
         } else {
-            Uhcffa.instance().setLobbyItem(player);
+            Uhcffa.getInstance().setLobbyItem(player);
         }
     }
 

@@ -37,7 +37,7 @@ public class SlimeExplosion extends KillEffect {
             }
 
         };
-        runnable.runTaskTimer(Uhcffa.instance(), 5, 5);
+        runnable.runTaskTimer(Uhcffa.getInstance(), 5, 5);
     }
 
 }

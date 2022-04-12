@@ -26,7 +26,7 @@ public class ShopItem extends ExecutableItem {
     @Override
     public void onClick(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
-        ShopMenu.INVENTORY.open(player);
+        ShopMenu.INVENTORY(player).open(player);
         event.setCancelled(true);
     }
 }

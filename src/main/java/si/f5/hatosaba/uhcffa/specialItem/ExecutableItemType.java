@@ -34,7 +34,7 @@ public enum ExecutableItemType {
     DUEL_PLAY_AGAIN("again"),
     SPECTATOR("spec");
 
-    private  ExecutableManager manager = Uhcffa.instance().getExecutableManager();
+    private  ExecutableManager manager = Uhcffa.getInstance().getExecutableManager();
 
     private final String id;
 

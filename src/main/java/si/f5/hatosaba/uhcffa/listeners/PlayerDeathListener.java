@@ -73,7 +73,7 @@ public class PlayerDeathListener implements Listener {
 
       //  ..PvPLevelsAPI.getInstance().getPlayerConnect(player.).setXp(PvPLevelsAPI.getInstance().getPlayerConnect(uuid).getKills());
 
-        Sync.define(() -> Uhcffa.instance().setSpectatorItem(player)).executeLater(20L);
+        Sync.define(() -> Uhcffa.getInstance().setSpectatorItem(player)).executeLater(20L);
 
         // プレイヤーヘッド
         dropSkull(player);
@@ -224,7 +224,7 @@ public class PlayerDeathListener implements Listener {
                         p.getInventory().addItem(ItemBuilder.of(Material.ARROW).build());
                     }
                     double health1 = e.getHealth();
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(Uhcffa.instance(), () -> {
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(Uhcffa.getInstance(), () -> {
                         double distance = p.getLocation().distance(e.getLocation());
                         BigDecimal distancebi = new BigDecimal(distance);
                         double newdistance = distancebi.setScale(2, BigDecimal.ROUND_DOWN).doubleValue();

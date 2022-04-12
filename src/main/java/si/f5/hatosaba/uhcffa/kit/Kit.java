@@ -67,7 +67,7 @@ public class Kit {
         if(items != null)
             player.getInventory().setContents(items);
 
-        /*CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(PlayerConverter.getID(player));
+        /*CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(PlayerConverter.getID(player));
 
         final CustomPlayer.Preset preset = customPlayer.getPreset();
         if (preset == null) {

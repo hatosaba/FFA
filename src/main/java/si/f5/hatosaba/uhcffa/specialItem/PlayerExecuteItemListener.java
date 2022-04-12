@@ -22,7 +22,7 @@ public class PlayerExecuteItemListener implements Listener {
     private final ExecutableItemRegistry registry;
 
     public PlayerExecuteItemListener(ExecutableItemRegistry registry) {
-        Bukkit.getPluginManager().registerEvents(this, Uhcffa.instance());
+        Bukkit.getPluginManager().registerEvents(this, Uhcffa.getInstance());
         this.registry = registry;
     }
 

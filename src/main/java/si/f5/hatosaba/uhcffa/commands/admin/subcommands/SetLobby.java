@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class SetLobby extends StandaloneCommand {
 
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
     private final Uhcffa plugin;
     private final SuperCommand parent;
 
@@ -36,7 +36,7 @@ public class SetLobby extends StandaloneCommand {
         }
 
         Player player = (Player) commandSender;
-        Uhcffa.instance().config().setLobby(player.getLocation());
+        Uhcffa.getInstance().config().setLobby(player.getLocation());
         player.sendMessage("ロビーを設定しました");
 
         return true;

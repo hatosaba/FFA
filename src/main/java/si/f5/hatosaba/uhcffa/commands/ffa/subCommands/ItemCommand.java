@@ -44,9 +44,9 @@ public class ItemCommand extends StandaloneCommand {
     private void tryGivingDefaultItemsTo(Player player) {
         if (KitManager.getInstance().isSelected(player)) {
             //tryGivingItemTo(player, Constants.INSTANT_RESPAWN_ITEM, 0);
-            Uhcffa.instance().setSpectatorItem(player);
+            Uhcffa.getInstance().setSpectatorItem(player);
         } else {
-            Uhcffa.instance().setLobbyItem(player);
+            Uhcffa.getInstance().setLobbyItem(player);
         }
     }
 

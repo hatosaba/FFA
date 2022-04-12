@@ -86,7 +86,21 @@ public class CustomPlayer {
                 toPlayer.sendMessage(player.getName() + "からのリクエストが無効になりました");
             }
         });
-        unrequests.get(playerID).runTaskLater(Uhcffa.instance(), 30 * 20);
+        unrequests.get(playerID).runTaskLater(Uhcffa.getInstance(), 30 * 20);
+    }
+
+    public void cancelRequest() {
+        sendTranslated("request.cancel");
+        requests.forEach((s, request) -> {
+            CustomPlayer requester = Uhcffa.getCustomPlayer(s);
+            requester.sendTranslated("request.cancel");
+        });
+        unrequests.forEach((s, bukkitRunnable) -> {
+            if (bukkitRunnable != null) {
+                bukkitRunnable.cancel();
+            }
+        });
+        requests.clear();
     }
 
     public void removeRequest(String playerID) {

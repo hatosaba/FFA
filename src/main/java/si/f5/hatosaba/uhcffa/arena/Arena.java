@@ -16,6 +16,7 @@ import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.menu.InvSeeMenu;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
+import si.f5.hatosaba.uhcffa.schedule.Sync;
 import si.f5.hatosaba.uhcffa.sound.SoundEffects;
 import si.f5.hatosaba.uhcffa.specialItem.ExecutableItemType;
 import si.f5.hatosaba.uhcffa.spectetor.SpectetorSet;
@@ -129,7 +130,7 @@ public class Arena {
                 elapsedTime++;
                 i--;
             }
-        }.runTaskTimer(Uhcffa.instance(), 0L, 20L);
+        }.runTaskTimer(Uhcffa.getInstance(), 0L, 20L);
     }
 
     public void startGame() {
@@ -139,26 +140,14 @@ public class Arena {
     public void onDeath(String playerID) {
         final Player player = PlayerConverter.getPlayer(playerID);
 
-        spectetorSet.applyHideMode(player);
-        spectators.add(playerID);
+        /*spectetorSet.applyHideMode(player);
+        spectators.add(playerID);*/
         endGame();
-        /*PlayerObject killer = null;
-        final Player player = PlayerConverter.getPlayer(playerID);
-        if (player.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-            EntityDamageByEntityEvent event = (EntityDamageByEntityEvent) player.getLastDamageCause();
-            if (event.getDamager() instanceof Player) {
-                Player damagePlayer = (Player) event.getDamager();
-                killer = Duel.getPlayerController().getPlayer(damagePlayer.getUniqueId());
-            }
-        }
-        if (killer != null) {
-            this.kills.put(killer.getUniqueId(), this.kills.getOrDefault(killer.getUniqueId(), 0) + 1);
-        }
-        playerObject.setBestStreak(0);
-        playerObject.setDeaths(playerObject.getDeaths() + 1);
-        this.getPlayers().remove(playerObject);
-        this.addSpectator(playerObject);
-        this.phaseSeries.next();*/
+        Sync.define(() -> players.forEach(s -> {
+            fixPlayer(s);
+            ExecutableItemType.DUEL_PLAY_AGAIN.setItem(4, s);
+            ExecutableItemType.DUEL_LEAVE_ITEM.setItem(8, s);
+        })).execute();
     }
 
     public void fixPlayer(String playerID) {
@@ -202,7 +191,7 @@ public class Arena {
             public void run() {
                 elapsedTime++;
             }
-        }.runTaskTimer(Uhcffa.instance(), 0L, 20L);
+        }.runTaskTimer(Uhcffa.getInstance(), 0L, 20L);
     }
 
     public void addPlayer(String playerID) {
@@ -255,12 +244,18 @@ public class Arena {
         if (state == ArenaState.COUNTING_DOWN) {
             if (this.startTask != null) {
                 this.startTask.cancel();
-                players.forEach(s -> sendMessage(s, Translated.key("duel.cancel").get(playerID)));
+                state = ArenaState.WAITING_FOR_PLAYERS;
+                players.forEach(s -> {
+                    fixPlayer(s);
+                    ExecutableItemType.DUEL_LEAVE_ITEM.setItem(8, s);
+
+                });
+                sendMessage("duel.cancel");
             }
         }
 
-        player.teleport(Uhcffa.instance().config().getLobby());
-        Uhcffa.instance().setLobbyItem(player);
+        Uhcffa.getInstance().setLobbyItem(player);
+        player.teleport(Uhcffa.getInstance().config().getLobby());
 
         spectetorSet.applyShowMode(player);
 
@@ -273,7 +268,7 @@ public class Arena {
 
         removeDropItem();
 
-        String  spectator = this.spectators.isEmpty() ? null : this.spectators.get(0);
+        String spectator = this.spectators.isEmpty() ? null : this.spectators.get(0);
         String winner = (spectator != null)
                 ? (this.APlayers.contains(spectator) ? (this.BPlayers.isEmpty() ? spectator : this.BPlayers.get(0))
                 : (this.APlayers.isEmpty() ? spectator : this.APlayers.get(0)))
@@ -288,13 +283,12 @@ public class Arena {
 
         sendTitle(winner, "&6VICTORY", PlayerConverter.getName(winner) + " won the game");
 
+
+
         List<String> targetList = new LinkedList<>(this.players);
         for (String playerID : targetList) {
             invs.put(playerID, PlayerConverter.getPlayer(playerID).getInventory().getContents());
             armors.put(playerID, PlayerConverter.getPlayer(playerID).getEquipment().getArmorContents());
-            fixPlayer(playerID);
-            ExecutableItemType.DUEL_PLAY_AGAIN.setItem(4, playerID);
-            ExecutableItemType.DUEL_LEAVE_ITEM.setItem(8, playerID);
             String enemyName = PlayerConverter.getName(getEnemy(playerID));
             sendMessage(playerID ,ColorUtils.translateAlternateColorCodes('&',"&7&m&l============================================"));
             //ChatUtils.sendCenteredMessage(playerID, message);
@@ -313,7 +307,7 @@ public class Arena {
 
         this.state = ArenaState.GAME_END;
         stopTask = new BukkitRunnable() {
-            int i = 15; // end time
+            int i = 10; // end time
             @Override
             public void run() {
                 if(i == 0) {
@@ -328,7 +322,7 @@ public class Arena {
                 elapsedTime++;
                 i--;
             }
-        }.runTaskTimer(Uhcffa.instance(), 0L, 20L);
+        }.runTaskTimer(Uhcffa.getInstance(), 0L, 20L);
     }
 
     public void nextJoinGame() {
@@ -339,7 +333,7 @@ public class Arena {
 
     public void nextJoinGame(String playerID) {
         players.remove(playerID);
-        Uhcffa.instance().getArenaManager().joinMatch(playerID, kit);
+        Uhcffa.getInstance().getArenaManager().joinMatch(playerID, kit);
     }
 
     public void reset() {
@@ -478,15 +472,12 @@ public class Arena {
         Titles.sendTitle(player, 5, 20, 5, title, subTitle);
     }
 
-    public void sendMessage(String playerID ,String message) {
+    public void sendMessage(String playerID, String message) {
             final Player player = PlayerConverter.getPlayer(playerID);
             player.sendMessage(ColorUtils.translateAlternateColorCodes('&', message));
     }
 
-    public void sendMessage(String message) {
-        for(String p : players) {
-            if(p != null)
-                sendMessage(p, message);
-        }
+    public void sendMessage(String key) {
+        for(String p : players) Uhcffa.getCustomPlayer(p).sendTranslated(key);
     }
 }

@@ -34,8 +34,8 @@ public class SpectetorItem extends ExecutableItem {
         player.setAllowFlight(true);
         player.setFlying(true);
         SpectetorSet.getInstance().applyHideMode(player);
-        Uhcffa.instance().setSpectatorItem(player);
-        player.teleport(Uhcffa.instance().config().getSpawnPoints().stream().skip((new Random()).nextInt(Uhcffa.instance().config().getSpawnPoints().size())).findFirst().get());
+        Uhcffa.getInstance().setSpectatorItem(player);
+        player.teleport(Uhcffa.getInstance().config().getSpawnPoints().stream().skip((new Random()).nextInt(Uhcffa.getInstance().config().getSpawnPoints().size())).findFirst().get());
 
         event.setCancelled(true);
     }

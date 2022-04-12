@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
 import si.f5.hatosaba.uhcffa.commands.duel.subcommands.LeaveCommand;
+import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.menu.KitSelectorMenu;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class DuelCommand extends SuperCommand {
 
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     private final Uhcffa plugin;
     private final Command[] commands;
@@ -57,16 +58,25 @@ public class DuelCommand extends SuperCommand {
             sender.sendMessage("自分自身にリクエストを送信できません");
             return;
         }*/
+            if(KitManager.getInstance().isSelected(sender.getPlayer())) {
+                sender.sendTranslated("duel.playing.ffa");
+                return false;
+            }
+
+            if(KitManager.getInstance().isSelected(player)) {
+                sender.sendTranslated("duel.playing.ffa");
+                return false;
+            }
 
             CustomPlayer customPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(player));
 
             if (customPlayer.isBusy()) {
-                customPlayer.sendTranslated("duel.playing");
+                sender.sendTranslated("duel.playing");
                 //sender.sendMessage("duelをプレイ中です");
                 return false;
             }
 
-            final String playerID = PlayerConverter.getID(sender.getPlayerID());
+            final String playerID = PlayerConverter.getID(sender.getPlayer());
             final String toPlayerID = PlayerConverter.getID(player);
 
             if (customPlayer.isAlreadyRequested(playerID)) {

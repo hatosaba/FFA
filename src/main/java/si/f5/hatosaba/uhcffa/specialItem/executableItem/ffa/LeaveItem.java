@@ -29,8 +29,8 @@ public class LeaveItem extends ExecutableItem {
     @Override
     public void onClick(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
-        player.teleport(Uhcffa.instance().config().getLobby());
-        Uhcffa.instance().setLobbyItem(player);
+        player.teleport(Uhcffa.getInstance().config().getLobby());
+        Uhcffa.getInstance().setLobbyItem(player);
         KitManager.getInstance().removeSelectedKit(player);
         if(player.getGameMode() == GameMode.SURVIVAL) {
             player.setAllowFlight(false);

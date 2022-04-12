@@ -34,7 +34,7 @@ public class TextUtil {
     }
 
     public static String getByPlaceholders(String text, Player player) {
-        if (player == null || !Uhcffa.instance().isPlaceholderAPI()) return colorize(text);
+        if (player == null || !Uhcffa.getInstance().isPlaceholderAPI()) return colorize(text);
         return colorize(PlaceholderAPI.setPlaceholders(player, text));
     }
 

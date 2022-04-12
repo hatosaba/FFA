@@ -26,7 +26,7 @@ import java.util.logging.Level;
 
 public class User {
 
-    private Uhcffa uhcffa = Uhcffa.instance();
+    private Uhcffa uhcffa = Uhcffa.getInstance();
     //UUID
     public final UUID uuid;
 

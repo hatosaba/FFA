@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class AcceptCommand extends SuperCommand {
 
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     private final Uhcffa plugin;
     private final Command[] commands;
@@ -35,7 +35,7 @@ public class AcceptCommand extends SuperCommand {
             CustomPlayer sender = Uhcffa.getCustomPlayer(commandSender);
 
             if(args.length == 0) {
-                sender.sendMessage("プレイヤー名を指定してください");
+                sender.sendTranslated("specify.player.name");
                 return false;
             }
 
@@ -44,7 +44,7 @@ public class AcceptCommand extends SuperCommand {
             Player player = Bukkit.getPlayer(playerName);
 
             if (player == null) {
-                sender.sendMessage(playerName + "というプレイヤーが見つかりません");
+                sender.sendTranslated("not.find.player", playerName);
                 return false;
             }
 
@@ -54,13 +54,13 @@ public class AcceptCommand extends SuperCommand {
         }*/
 
             final String playerID = PlayerConverter.getID(player);
-            final String toPlayerID = PlayerConverter.getID(sender.getName());
+            final String toPlayerID = sender.getPlayerID();
 
-            CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(toPlayerID);
+            CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(toPlayerID);
             ArenaManager.Request request = customPlayer.getRequest(playerID);
 
             if (request == null) {
-                sender.sendMessage(player.getName() + "からのリクエストを受信されていません");
+                sender.sendTranslated("request.not.receive" ,player.getName());
                 return false;
             }
 

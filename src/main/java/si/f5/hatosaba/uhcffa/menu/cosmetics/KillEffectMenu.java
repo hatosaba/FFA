@@ -16,7 +16,7 @@ import si.f5.hatosaba.uhcffa.sound.SoundEffects;
 import si.f5.hatosaba.uhcffa.user.PurchasedEffect;
 import si.f5.hatosaba.uhcffa.user.User;
 import si.f5.hatosaba.uhcffa.user.UserSet;
-import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ public class KillEffectMenu implements InventoryProvider {
 
     public static final SmartInventory INVENTORY = SmartInventory.builder()
             .id("killEffect")
-            .manager(Uhcffa.instance().getManager())
+            .manager(Uhcffa.getInstance().getManager())
             .provider(new KillEffectMenu())
             .size(6, 9)
             .title(DARK_GRAY + "KillEffect")
@@ -50,12 +50,12 @@ public class KillEffectMenu implements InventoryProvider {
             Effect item = effects.get(i);
 
             items[i] = ClickableItem.of(
-                    ItemStackBuilder.createItem(item.item.clone(),GREEN + item.name,
-                            Arrays.asList(
-                                    DARK_GRAY + "エフェクト",
-                                    purchasedEffect.has(item) ? "" : GRAY + "コスト: "+ GOLD + item.value,
-                                    purchasedEffect.has(item) ? (user.purchasedEffect.isSelected(item) ?  GREEN + "選択済み" : YELLOW + "クリックして選択") : RED + "購入する"
-                            ))
+                    ItemBuilder.modify(item.item.clone()).name(item.name)
+                    .lore(Arrays.asList(
+                            DARK_GRAY + "エフェクト",
+                            purchasedEffect.has(item) ? "" : GRAY + "コスト: "+ GOLD + item.value,
+                            purchasedEffect.has(item) ? (user.purchasedEffect.isSelected(item) ?  GREEN + "選択済み" : YELLOW + "クリックして選択") : RED + "購入する"
+                    )).build()
                     , e -> {
                         if(!user.purchasedEffect.isSelected(item) ) {
                             if (purchasedEffect.has(item)) {
@@ -83,33 +83,33 @@ public class KillEffectMenu implements InventoryProvider {
 
         if(!pagination.isFirst()) {
             contents.set(5, 0, ClickableItem.of(
-                    ItemStackBuilder.builder(Material.ARROW)
-                            .setDisplayName(GREEN + "前のページへ")
+                    ItemBuilder.of(Material.ARROW)
+                            .name(GREEN + "前のページへ")
                             .build(),
                     e -> INVENTORY.open(player, pagination.previous().getPage())));
         }
 
         if(!pagination.isLast()) {
             contents.set(5, 8, ClickableItem.of(
-                    ItemStackBuilder.builder(Material.ARROW)
-                            .setDisplayName(GREEN + "次のページへ")
+                    ItemBuilder.of(Material.ARROW)
+                            .name(GREEN + "次のページへ")
                             .build(),
                     e -> INVENTORY.open(player, pagination.next().getPage())));
         }
 
         contents.set(5, 3, ClickableItem.of(
-                ItemStackBuilder.builder(Material.ARROW)
-                        .setDisplayName(GRAY + "戻る")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.ARROW)
+                        .name(GRAY + "戻る")
+                        .lore(Arrays.asList(
                                 GRAY + "化粧品へ"
                         ))
                         .build(),
                 e -> MyCosmeticsMenu.INVENTORY.open(player)));
 
         contents.set(5, 4, ClickableItem.of(
-                ItemStackBuilder.builder(Material.EMERALD)
-                        .setDisplayName(GRAY + "統計コイン:" + YELLOW + UserSet.getInstnace().getUser(player).coins())
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.EMERALD)
+                        .name(GRAY + "統計コイン:" + YELLOW + UserSet.getInstnace().getUser(player).coins())
+                        .lore(Arrays.asList(
                                 GRAY + "投票してコインを多く受け取る",
                                 GOLD + "https://hatosaba.f5.si/jms"
                         ))

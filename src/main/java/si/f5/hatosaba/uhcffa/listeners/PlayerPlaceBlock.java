@@ -35,7 +35,7 @@ public class PlayerPlaceBlock implements Listener {
         final User u = UserSet.getInstnace().getUser(p);
 
         final String playerID = PlayerConverter.getID(p);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if (customPlayer.inArena()) return;
 

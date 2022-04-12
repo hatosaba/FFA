@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class RemoveCommand extends StandaloneCommand {
 
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
     private final Uhcffa plugin;
     private final SuperCommand parent;
 
@@ -36,7 +36,7 @@ public class RemoveCommand extends StandaloneCommand {
 
         Player player = (Player) commandSender;
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.instance().getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if(args.length == 0) {
             player.sendMessage("足りない");

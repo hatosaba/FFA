@@ -62,10 +62,10 @@ public class CombatTagger implements Listener {
                                 PlayerJoinQuitListener.combatPlayers.remove(uuid);
                             }
                         }
-                    }.runTaskLater(Uhcffa.instance(), delay * 20L);
+                    }.runTaskLater(Uhcffa.getInstance(), delay * 20L);
                 }
             });
-            UNTAGGERS.get(uuid).runTaskLater(Uhcffa.instance(), delay * 20L);
+            UNTAGGERS.get(uuid).runTaskLater(Uhcffa.getInstance(), delay * 20L);
         }
     }
 

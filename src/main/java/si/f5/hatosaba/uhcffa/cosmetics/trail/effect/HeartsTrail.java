@@ -24,7 +24,7 @@ public class HeartsTrail extends TrailEffect {
             }
 
         };
-        runnable.runTaskTimer(Uhcffa.instance(), 2, 2);
+        runnable.runTaskTimer(Uhcffa.getInstance(), 2, 2);
     }
 
 }

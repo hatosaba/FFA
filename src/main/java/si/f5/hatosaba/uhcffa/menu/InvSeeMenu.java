@@ -27,7 +27,7 @@ import static org.bukkit.ChatColor.*;
 public class InvSeeMenu implements InventoryProvider {
 
     private final KitManager kitManager = KitManager.getInstance();
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     private final ItemStack[] contents;
     private final ItemStack[] armorContetns;
@@ -36,7 +36,7 @@ public class InvSeeMenu implements InventoryProvider {
     public static SmartInventory INVENTORY(ItemStack[] contents, ItemStack[] armorContetns) {
         return SmartInventory.builder()
                 .id("inv")
-                .manager(Uhcffa.instance().getManager())
+                .manager(Uhcffa.getInstance().getManager())
                 .provider(new InvSeeMenu(contents, armorContetns))
                 .size(6, 9)
                 .title("")

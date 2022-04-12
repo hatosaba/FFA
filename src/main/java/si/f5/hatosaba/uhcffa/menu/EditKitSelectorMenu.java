@@ -4,12 +4,13 @@ import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
+import net.minecraft.server.v1_8_R3.Item;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
-import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
+import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 
 import java.util.Arrays;
 
@@ -21,7 +22,7 @@ public class EditKitSelectorMenu implements InventoryProvider {
 
     public static final SmartInventory INVENTORY = SmartInventory.builder()
             .id("edit")
-            .manager(Uhcffa.instance().getManager())
+            .manager(Uhcffa.getInstance().getManager())
             .provider(new EditKitSelectorMenu())
             .size(3, 9)
             .title(GREEN + "ここからキットが編集できます")
@@ -31,13 +32,13 @@ public class EditKitSelectorMenu implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         contents.set(0, 0, ClickableItem.of(
-                ItemStackBuilder.builder(Material.DIAMOND_SWORD)
-                        .setDisplayName(GREEN + "Standard Kit")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.DIAMOND_SWORD)
+                        .name(GREEN + "Standard Kit")
+                        .lore(Arrays.asList(
                                 "",
                                 YELLOW + "クリックして編集する"
                         ))
-                        .addFlag(ItemFlag.HIDE_ATTRIBUTES)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .build(),
                 e -> {
                     kitManager.selectToKit(player, kitManager.getKit("standard"), true);
@@ -45,9 +46,9 @@ public class EditKitSelectorMenu implements InventoryProvider {
                 }));
 
         contents.set(0, 1, ClickableItem.of(
-                ItemStackBuilder.builder(Material.BOW)
-                        .setDisplayName(GREEN + "Archer Kit")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.BOW)
+                        .name(GREEN + "Archer Kit")
+                        .lore(Arrays.asList(
                                 "",
                                 YELLOW + "クリックして編集する"
                         ))
@@ -58,13 +59,13 @@ public class EditKitSelectorMenu implements InventoryProvider {
                 }));
 
         contents.set(0, 2, ClickableItem.of(
-                ItemStackBuilder.builder(Material.IRON_SWORD)
-                        .setDisplayName(GREEN + "Anduril Kit")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.IRON_SWORD)
+                        .name(GREEN + "Anduril Kit")
+                        .lore(Arrays.asList(
                                 "",
                                 YELLOW + "クリックして編集する"
                         ))
-                        .addFlag(ItemFlag.HIDE_ATTRIBUTES)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .build(),
                 e -> {
                     kitManager.selectToKit(player, kitManager.getKit("anduril"), true);
@@ -72,15 +73,15 @@ public class EditKitSelectorMenu implements InventoryProvider {
                 }));
 
         contents.set(0, 3, ClickableItem.of(
-                ItemStackBuilder.builder(Material.DIAMOND_SWORD)
-                        .setDisplayName(YELLOW + "Excalibur Kit")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.DIAMOND_SWORD)
+                        .name(YELLOW + "Excalibur Kit")
+                        .lore(Arrays.asList(
                                 RED + "Explosive (!)",
                                 BLUE + "Chaos",
                                 "",
                                 YELLOW + "クリックして編集する"
                         ))
-                        .addFlag(ItemFlag.HIDE_ATTRIBUTES)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .build(),
                 e -> {
                     kitManager.selectToKit(player, kitManager.getKit("excalibur"), true);
@@ -88,13 +89,13 @@ public class EditKitSelectorMenu implements InventoryProvider {
                 }));
 
         contents.set(0, 4, ClickableItem.of(
-                ItemStackBuilder.builder(Material.DIAMOND_AXE)
-                        .setDisplayName(GOLD + "Axe of Perun Kit")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.DIAMOND_AXE)
+                        .name(GOLD + "Axe of Perun Kit")
+                        .lore(Arrays.asList(
                                 "",
                                 YELLOW + "クリックして編集する"
                         ))
-                        .addFlag(ItemFlag.HIDE_ATTRIBUTES)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .build(),
                 e -> {
                     kitManager.selectToKit(player, kitManager.getKit("perun"), true);
@@ -102,9 +103,9 @@ public class EditKitSelectorMenu implements InventoryProvider {
                 }));
 
         contents.set(0, 5, ClickableItem.of(
-                ItemStackBuilder.builder(Material.BOW)
-                        .setDisplayName(RED + "Artemis's Bow Kit")
-                        .setLore(Arrays.asList(
+                ItemBuilder.of(Material.BOW)
+                        .name(RED + "Artemis's Bow Kit")
+                        .lore(Arrays.asList(
                                 BLUE + "Hunting",
                                 "",
                                 YELLOW + "クリックして編集する"

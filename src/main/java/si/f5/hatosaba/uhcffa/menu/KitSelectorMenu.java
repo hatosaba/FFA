@@ -11,25 +11,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
-import si.f5.hatosaba.uhcffa.cosmetics.killeffect.Effect;
 import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
-import si.f5.hatosaba.uhcffa.sound.SoundEffect;
-import si.f5.hatosaba.uhcffa.sound.SoundEffects;
 import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
-import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import static org.bukkit.ChatColor.*;
-import static org.bukkit.ChatColor.RED;
 
 public class KitSelectorMenu implements InventoryProvider {
 
     private final KitManager kitManager = KitManager.getInstance();
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     private final String playerID;
     private final String toPlayerID;
@@ -38,7 +30,7 @@ public class KitSelectorMenu implements InventoryProvider {
     public static final SmartInventory INVENTORY(String playerID, String toPlayerID) {
         return SmartInventory.builder()
                 .id("selector")
-                .manager(Uhcffa.instance().getManager())
+                .manager(Uhcffa.getInstance().getManager())
                 .provider(new KitSelectorMenu(playerID, toPlayerID))
                 .size(3, 9)
                 .title(PlayerConverter.getName(toPlayerID) + "にリクエストを送信")

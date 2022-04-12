@@ -8,30 +8,25 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
 import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
-import si.f5.hatosaba.uhcffa.utils.ItemStackBuilder;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
-
-import static org.bukkit.ChatColor.*;
 
 public class NormalKitSelectorMenu implements InventoryProvider {
 
     private final KitManager kitManager = KitManager.getInstance();
-    private final ArenaManager arenaManager = Uhcffa.instance().getArenaManager();
+    private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
 
     public static SmartInventory INVENTORY() {
         return SmartInventory.builder()
                 .id("normal")
-                .manager(Uhcffa.instance().getManager())
+                .manager(Uhcffa.getInstance().getManager())
                 .provider(new NormalKitSelectorMenu())
                 .size(6, 9)
                 .title("")
