@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
+import si.f5.hatosaba.uhcffa.commands.duel.subcommands.JoinCommand;
 import si.f5.hatosaba.uhcffa.commands.duel.subcommands.LeaveCommand;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.menu.KitSelectorMenu;
@@ -30,7 +31,8 @@ public class DuelCommand extends SuperCommand {
         this.plugin = plugin;
 
         this.commands = new Command[]{
-                new LeaveCommand(plugin, this)
+                new LeaveCommand(plugin, this),
+                new JoinCommand(plugin, this)
         };
     }
 

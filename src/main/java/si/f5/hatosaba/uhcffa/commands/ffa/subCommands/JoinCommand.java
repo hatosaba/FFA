@@ -1,4 +1,4 @@
-package si.f5.hatosaba.uhcffa.commands.duel.subcommands;
+package si.f5.hatosaba.uhcffa.commands.ffa.subCommands;
 
 import com.lielamar.lielsutils.bukkit.commands.StandaloneCommand;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
@@ -9,7 +9,6 @@ import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
 import si.f5.hatosaba.uhcffa.arena.ArenaState;
-import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
@@ -26,7 +25,7 @@ public class JoinCommand extends StandaloneCommand {
     private final SuperCommand parent;
 
     public JoinCommand(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
-        super("join", "duel.use");
+        super("join", "ffa.use");
 
         this.plugin = plugin;
         this.parent = parent;
@@ -38,29 +37,22 @@ public class JoinCommand extends StandaloneCommand {
             commandSender.sendMessage("only execute player");
             return false;
         }
-
-        final CustomPlayer sender = Uhcffa.getCustomPlayer(commandSender);
-
-        if(args.length == 0) {
-            sender.sendTranslated("specify.kit-name");
-            //player.sendMessage("キット名を指定設定してください");
-            return false;
-        }
-
-        String kitName = args[0];
-        if (!KitManager.getInstance().containsKit(kitName)) {
-            sender.sendTranslated("kit.not-found");
-            //player.sendMessage("存在しません");
-            return false;
-        }
-
-        arenaManager.joinMatch(sender.getPlayerID(), KitManager.getInstance().getKit(kitName));
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer(commandSender);
+        KitManager.getInstance().selectToKit(customPlayer.getPlayer(), KitManager.getInstance().getKit("standard"), false);
         return true;
     }
 
     @Override
     public List<String> tabOptions(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        return KitManager.getInstance().getKits().stream().map(Kit::getName).collect(Collectors.toList());
+        List<Arena> availableGames = new LinkedList<>();
+        for (Arena arena : arenaManager.getArenas().values()) {
+            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS && !arena.isFull()) {
+                availableGames.add(arena);
+            }
+        }
+        if (availableGames.isEmpty()) return new ArrayList<>();
+
+        return availableGames.stream().map(Arena::getName).collect(Collectors.toList());
     }
 
     @Override

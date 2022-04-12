@@ -7,10 +7,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.CreateKitCommand;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.ItemCommand;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.RemoveKitCommand;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.SetKitCommand;
+import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +25,8 @@ public class FFACommand extends SuperCommand {
                 new SetKitCommand(plugin, this),
                 new CreateKitCommand(plugin, this),
                 new RemoveKitCommand(plugin, this),
-                new ItemCommand(plugin, this)
+                new ItemCommand(plugin, this),
+                new JoinCommand(plugin, this)
         };
     }
 
