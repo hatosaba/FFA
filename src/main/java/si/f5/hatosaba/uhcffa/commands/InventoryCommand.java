@@ -9,10 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaState;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.CreateKitCommand;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.RemoveKitCommand;
-import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.SetKitCommand;
-import si.f5.hatosaba.uhcffa.menu.InvSeeMenu;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
@@ -60,12 +56,12 @@ public class InventoryCommand extends SuperCommand {
             if(customPlayer.getArena() == targetPlayer.getArena()) {
                 Arena arena = customPlayer.getArena();
 
-                if (arena.getState() != ArenaState.GAME_END) {
+                if (arena.getArenaState() != ArenaState.GAME_END) {
                     player.sendMessage("現在利用できません");
                     return  false;
                 }
 
-                arena.invSee(playerID, targetPlayerID);
+                //arena.invSee(playerID, targetPlayerID);
                 return  true;
             }
 

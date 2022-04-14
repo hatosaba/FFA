@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
+import si.f5.hatosaba.uhcffa.arena.ArenaState;
 import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
@@ -60,11 +61,9 @@ public class KitSelectorMenu implements InventoryProvider {
                                     "&eClick to play!",
                                     "&7" + arenaManager.getArenas().values().stream()
                                             .filter(arena1 -> {
-                                                if (arena1.getKit() == null)
-                                                    return false;
-                                                else if (arena1.getKit() == kit)
-                                                    return true;
-                                                return false;
+                                                if (arena1.getKit() == null) return false;
+                                                if (arena1.getArenaState() != ArenaState.IN_GAME) return false;
+                                                return true;
                                             }).count()
                                             + " currently playing!")
                             .build()

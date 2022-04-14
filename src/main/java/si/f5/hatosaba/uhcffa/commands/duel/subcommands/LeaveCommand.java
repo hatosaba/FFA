@@ -10,7 +10,6 @@ import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
 import si.f5.hatosaba.uhcffa.arena.ArenaState;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
-import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,18 +33,16 @@ public class LeaveCommand extends StandaloneCommand {
             commandSender.sendMessage("only execute player");
             return false;
         }
-
-        Player player = (Player) commandSender;
-        final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
+        final Player player = (Player) commandSender;
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(player);
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
 
-            if (arena.getState() == ArenaState.IN_GAME)
-                arena.onDeath(playerID);
+            if (arena.getArenaState() == ArenaState.IN_GAME)
+                arena.onDeath(customPlayer);
             else
-                arena.removePlayer(playerID);
+                arena.removePlayer(customPlayer);
             return true;
         }
         return false;

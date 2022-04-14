@@ -2,16 +2,12 @@ package si.f5.hatosaba.uhcffa.modules;
 
 import com.rexcantor64.triton.Triton;
 import com.rexcantor64.triton.player.LanguagePlayer;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
@@ -55,11 +51,11 @@ public class CustomPlayer {
     }
 
     public void sendTranslated(String key) {
-        sendTranslated(key, (String) null);
+        PlayerConverter.getPlayer(playerID).sendMessage(Triton.get().getLanguageManager().getText(languagePlayer, key));
     }
 
     public void sendTranslated(String key, String... args) {
-        PlayerConverter.getPlayer(playerID).sendMessage(Triton.get().getLanguageManager().getText(languagePlayer, key, (Object) args));
+        PlayerConverter.getPlayer(playerID).sendMessage(Triton.get().getLanguageManager().getText(languagePlayer, key, args));
     }
 
     public boolean inArena() {

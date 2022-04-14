@@ -34,7 +34,7 @@ public class DuelPlayAgainItem extends ExecutableItem {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            arena.nextJoinGame(playerID);
+            arena.nextJoinGame(customPlayer);
         }
     }
 }

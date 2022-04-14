@@ -34,7 +34,7 @@ public class DuelLeaveItem extends ExecutableItem {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            arena.removePlayer(playerID);
+            arena.removePlayer(customPlayer);
         }
     }
 }

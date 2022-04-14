@@ -1,5 +1,6 @@
 package si.f5.hatosaba.uhcffa.menu;
 
+import com.avaje.ebeaninternal.server.cache.CachedBeanDataUpdate;
 import fr.minuskube.inv.ClickableItem;
 import fr.minuskube.inv.SmartInventory;
 import fr.minuskube.inv.content.InventoryContents;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
+import si.f5.hatosaba.uhcffa.arena.ArenaState;
 import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
@@ -39,8 +41,6 @@ public class NormalKitSelectorMenu implements InventoryProvider {
         contents.fillBorders(ClickableItem.empty(new ItemStack(Material.AIR)));
         ClickableItem[] items = new ClickableItem[kitManager.getKits().size()];
 
-        final String playerID = PlayerConverter.getID(player);
-
         for (int i = 0; i < kitManager.getKits().size(); i++) {
             Kit kit = new ArrayList<>(kitManager.getKits()).get(i);
 
@@ -50,17 +50,18 @@ public class NormalKitSelectorMenu implements InventoryProvider {
                                     "",
                                     "&eLeft Click to play",
                                     "&7" + arenaManager.getArenas().values().stream()
-                                    .filter(arena1 -> {
-                                        if (arena1.getKit() == null)
-                                            return false;
-                                        else return arena1.getKit() == kit;
-                                    }).count()
-                            + " currently playing!")
+                                            .filter(arena1 -> {
+                                                if (arena1.getKit() == null) return false;
+                                                if (arena1.getKit() != kit) return false;
+                                                //if (arena1.getArenaState() != ArenaState.IN_GAME) return false;
+                                                return true;
+                                            }).count()
+                                            + " currently playing!")
                             .build()
                     , e -> {
                         if (e.isLeftClick()) {
                             player.closeInventory();
-                            arenaManager.joinMatch(playerID, kit);
+                            arenaManager.joinMatch(Uhcffa.getCustomPlayer(player), kit);
                         }
                     });
         }

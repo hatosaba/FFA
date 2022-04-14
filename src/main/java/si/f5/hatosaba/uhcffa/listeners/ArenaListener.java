@@ -1,7 +1,6 @@
 package si.f5.hatosaba.uhcffa.listeners;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.messages.ActionBar;
 import me.MathiasMC.PvPLevels.api.events.PlayerKillEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -22,12 +21,12 @@ import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaState;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
+import si.f5.hatosaba.uhcffa.spectetor.SpectetorSet;
 import si.f5.hatosaba.uhcffa.utils.BucketUtils;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 public class ArenaListener implements Listener {
 
@@ -45,7 +44,7 @@ public class ArenaListener implements Listener {
             Arena arena = customPlayer.getArena();
             if (player.getGameMode() == GameMode.CREATIVE) return;
 
-            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS ||arena.getState() == ArenaState.IN_GAME) {
+            if (arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS || arena.getArenaState() == ArenaState.IN_GAME) {
                 if (event.getTo().getY() <= 0) {
                     player.teleport(arena.getSpawn1());
                 }
@@ -67,8 +66,8 @@ public class ArenaListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() == ArenaState.IN_GAME) {
-                arena.onDeath(playerID);
+            if (arena.getArenaState() == ArenaState.IN_GAME) {
+                arena.onDeath(customPlayer);
                 event.setDeathMessage(null);
                 player.setHealth(player.getMaxHealth());
                 event.getDrops().clear();
@@ -95,17 +94,15 @@ public class ArenaListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() != ArenaState.IN_GAME) {
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
             } else {
                 Block block = event.getBlock();
                 arena.getPlaced().add(block);
             }
-            if (arena.getState() == ArenaState.IN_GAME) {
+            if (arena.getArenaState() == ArenaState.IN_GAME) {
                 double max_build_y = arena.getMaxBuildY();
                 if (event.getBlockPlaced().getLocation().getBlockY() >= max_build_y) {
-                    customPlayer.sendTranslated("arena.max-build-y");
-                    //player.sendMessage(Duel.getMessageConfig().getString("arenas.max-build-y"));
                     event.setCancelled(true);
                 }
             }
@@ -120,14 +117,12 @@ public class ArenaListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() != ArenaState.IN_GAME) {
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
             } else {
                 Block block = event.getBlock();
                 if (!arena.getPlaced().contains(block)) {
                     event.setCancelled(true);
-                    customPlayer.sendTranslated("arena.own-break");
-                    //player.sendMessage(Duel.getMessageConfig().getString("arenas.own-break"));
                     return;
                 }
                 arena.getPlaced().remove(block);
@@ -170,7 +165,7 @@ public class ArenaListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() != ArenaState.IN_GAME) {
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
             } else {
                 Block clickedBlock = event.getBlockClicked();
@@ -197,7 +192,7 @@ public class ArenaListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() != ArenaState.IN_GAME) {
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
             } else {
                 Block clickedBlock = event.getBlockClicked();
@@ -241,10 +236,10 @@ public class ArenaListener implements Listener {
             if (itemStack2 == null) {
                 return;
             }
-            if (arena.getState() == ArenaState.IN_GAME) {
+            if (arena.getArenaState() == ArenaState.IN_GAME) {
                 arena.getDroppedItem().remove(event.getItem());
             }
-            if (arena.getState() != ArenaState.IN_GAME) {
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
             } else if (itemStack2.getType() != XMaterial.OAK_PLANKS.parseMaterial()) {
                 event.setCancelled(true);
@@ -271,7 +266,7 @@ public class ArenaListener implements Listener {
             if (itemStack2 == null) {
                 return;
             }
-            if (arena.getState() != ArenaState.IN_GAME) {
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
             } else if (itemStack2.getType() != XMaterial.OAK_PLANKS.parseMaterial()) {
                 event.setCancelled(true);
@@ -284,29 +279,49 @@ public class ArenaListener implements Listener {
     }
 
     @EventHandler
+    public void onEntityDamageEvent(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            CustomPlayer customPlayer = Uhcffa.getCustomPlayer(player);
+            if (!customPlayer.inArena()) {
+                if (!SpectetorSet.getInstance().isHideMode(player))
+                    return;
+                event.setCancelled(true);
+            }
+            Arena arena = customPlayer.getArena();
+            if (arena.getArenaState() == ArenaState.COUNTING_DOWN || arena.getArenaState() == ArenaState.GAME_END) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player player = (Player) event.getDamager();
-            final String playerID = PlayerConverter.getID(player);
-            final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
-
-            if (customPlayer.inArena()) {
-                Arena arena = customPlayer.getArena();
-                if (arena.getState() != ArenaState.IN_GAME) {
+            CustomPlayer customPlayer = Uhcffa.getCustomPlayer(player);
+            if (!customPlayer.inArena()) {
+                if (!SpectetorSet.getInstance().isHideMode(player))
+                    return;
+                event.setCancelled(true);
+            }
+            Arena arena = customPlayer.getArena();
+            if (arena.getArenaState() != ArenaState.IN_GAME) {
+                return;
+            }
+            if (event.getEntity() instanceof Player) {
+                CustomPlayer target = Uhcffa.getCustomPlayer((Player) event.getEntity());
+                Arena targetArena = customPlayer.getArena();
+                if (targetArena.getArenaState() != ArenaState.IN_GAME) {
                     return;
                 }
-                if (event.getEntity() instanceof Player) {
-                    Player target = (Player) event.getEntity();
-                    final String targetPlayerID = PlayerConverter.getID(target);
-                    final CustomPlayer targetCustomPlayer = Uhcffa.getInstance().getCustomPlayer(targetPlayerID);
-                    if (targetCustomPlayer.inArena()) {
-                        Arena targetArena = targetCustomPlayer.getArena();
-                        if (targetArena.getState() != ArenaState.IN_GAME) {
-                            return;
-                        }
-                        ActionBar.sendActionBar(player, String.valueOf(Math.round(event.getFinalDamage() * 100.0) / 100.0));
-                    }
-                }
+                        /*if (arena.getCurrentUUID().equals(targetArena.getCurrentUUID())) {
+                            ActionBar.sendActionBar(player,
+                                    Duel.getMessageConfig().getString("arenas.ingame.damage-actionbar").replace(
+                                            "%%damage%%",
+                                            String.valueOf(Math.round(event.getFinalDamage() * 100.0) / 100.0)));
+                        }*/
+
             }
         }
     }

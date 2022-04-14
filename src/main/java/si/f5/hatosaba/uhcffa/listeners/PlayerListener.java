@@ -109,6 +109,11 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onExplode(ExplosionPrimeEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
     public void onCraftItem(CraftItemEvent event) {
         Player player = (Player) event.getWhoClicked();
         UUID uuid = player.getUniqueId();
@@ -208,7 +213,8 @@ public class PlayerListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-            if (arena.getState() == ArenaState.COUNTING_DOWN || arena.getState() == ArenaState.GAME_END) event.setCancelled(true);
+            if (arena.getArenaState() != ArenaState.IN_GAME)
+                event.setCancelled(true);
         }
 
         if (player.getGameMode() == GameMode.CREATIVE) return;

@@ -76,15 +76,14 @@ public class ArenaManager {
         return new Yaml(plugin, new File(folder, arenaName + ".yml"), "arena.yml");
     }
 
-    public void joinMatch(String playerID, Kit kit) {
+    public void joinMatch(CustomPlayer customPlayer, Kit kit) {
         List<Arena> availableGames = new LinkedList<>();
         for (Arena arena : arenas.values()) {
-            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS && !arena.isFull()) {
+            if (arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS && !arena.isFull()) {
                 availableGames.add(arena);
             }
         }
         if (availableGames.isEmpty()) {
-            CustomPlayer customPlayer = Uhcffa.getCustomPlayer(playerID);
             customPlayer.sendTranslated("arena.not.use.arena");
             //player.sendMessage("使用できるアリーナがありません");
             return;
@@ -101,13 +100,13 @@ public class ArenaManager {
                 })
                 .min((arena1, arena2) -> arena2.getPlayers().size() - arena1.getPlayers().size())
                 .get();
-        arena.addPlayer(playerID);
+        arena.addPlayer(customPlayer);
     }
 
     public void createMatch(Request request) {
         List<Arena> availableGames = new LinkedList<>();
         for (Arena arena : arenas.values()) {
-            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS && !arena.isFull()) {
+            if (arena.getArenaState() == ArenaState.WAITING_FOR_PLAYERS && !arena.isFull()) {
                 availableGames.add(arena);
             }
         }
@@ -122,8 +121,8 @@ public class ArenaManager {
                 .get();
 
         arena.setKit(request.getKit());
-        arena.addPlayer(request.playerID);
-        arena.addPlayer(request.toPlayerID);
+        arena.addPlayer(Uhcffa.getCustomPlayer(request.playerID));
+        arena.addPlayer(Uhcffa.getCustomPlayer(request.toPlayerID));
     }
 
     public void removeArena(String arenaName) {

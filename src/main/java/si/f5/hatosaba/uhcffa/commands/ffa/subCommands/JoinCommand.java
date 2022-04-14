@@ -6,17 +6,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
-import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
-import si.f5.hatosaba.uhcffa.arena.ArenaState;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
-import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JoinCommand extends StandaloneCommand {
 
@@ -44,15 +39,7 @@ public class JoinCommand extends StandaloneCommand {
 
     @Override
     public List<String> tabOptions(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        List<Arena> availableGames = new LinkedList<>();
-        for (Arena arena : arenaManager.getArenas().values()) {
-            if (arena.getState() == ArenaState.WAITING_FOR_PLAYERS && !arena.isFull()) {
-                availableGames.add(arena);
-            }
-        }
-        if (availableGames.isEmpty()) return new ArrayList<>();
-
-        return availableGames.stream().map(Arena::getName).collect(Collectors.toList());
+        return new ArrayList<>();
     }
 
     @Override

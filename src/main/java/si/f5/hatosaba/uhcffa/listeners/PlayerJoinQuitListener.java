@@ -152,11 +152,13 @@ public class PlayerJoinQuitListener implements Listener {
 
         if (customPlayer.inArena()) {
             Arena arena = customPlayer.getArena();
-
-            if (arena.getState() == ArenaState.IN_GAME)
-                arena.onDeath(playerID);
+            if (arena.getArenaState() == ArenaState.IN_GAME) {
+                arena.sendGameMessage("duel.disconnected");
+                arena.onDeath(customPlayer);
+                arena.getPlayers().remove(customPlayer);
+            }
             else
-                arena.removePlayer(playerID);
+                arena.removePlayer(customPlayer);
             return;
         }
 
