@@ -9,6 +9,7 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
@@ -17,6 +18,7 @@ import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
+import si.f5.hatosaba.uhcffa.utils.Translated;
 
 import java.util.ArrayList;
 
@@ -45,7 +47,7 @@ public class NormalKitSelectorMenu implements InventoryProvider {
             Kit kit = new ArrayList<>(kitManager.getKits()).get(i);
 
             items[i] = ClickableItem.of(
-                    ItemBuilder.of(Material.BUCKET).name("&a" + kit.getName().toUpperCase())
+                    ItemBuilder.of(kit.getIcon().getType()).name(Translated.key("duel." + kit.getName()).get(player))
                             .lore(
                                     "",
                                     "&eLeft Click to play",
@@ -53,10 +55,11 @@ public class NormalKitSelectorMenu implements InventoryProvider {
                                             .filter(arena1 -> {
                                                 if (arena1.getKit() == null) return false;
                                                 if (arena1.getKit() != kit) return false;
-                                                //if (arena1.getArenaState() != ArenaState.IN_GAME) return false;
+                                                if (arena1.getArenaState() != ArenaState.IN_GAME) return false;
                                                 return true;
                                             }).count()
                                             + " currently playing!")
+                            .flags(ItemFlag.HIDE_ATTRIBUTES)
                             .build()
                     , e -> {
                         if (e.isLeftClick()) {
@@ -67,6 +70,8 @@ public class NormalKitSelectorMenu implements InventoryProvider {
         }
 
         contents.set(5,4, ClickableItem.of(ItemBuilder.of(Material.BARRIER).build(), e -> player.closeInventory()));
+        contents.set(5,7, ClickableItem.of(ItemBuilder.of(Material.BARRIER).build(), e -> LayoutEditorMenu.INVENTORY(player, kitManager.getKits().stream().findFirst().get()).open(player)));
+
 
         pagination.setItems(items);
         pagination.setItemsPerPage(6);

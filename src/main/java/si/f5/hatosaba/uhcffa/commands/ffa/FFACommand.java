@@ -3,11 +3,15 @@ package si.f5.hatosaba.uhcffa.commands.ffa;
 import com.lielamar.lielsutils.bukkit.commands.Command;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.*;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.CreateKitCommand;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.RemoveKitCommand;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.SetKitCommand;
+import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
+import si.f5.hatosaba.uhcffa.utils.Translated;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +66,8 @@ public class FFACommand extends SuperCommand {
 
     @Override
     public void noPermissionEvent(@NotNull CommandSender commandSender) {
-        commandSender.sendMessage("no permission");
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer(commandSender);
+        customPlayer.sendTranslated("command.no-permission");
     }
 
     @Override

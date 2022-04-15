@@ -241,7 +241,7 @@ public class ArenaListener implements Listener {
             }
             if (arena.getArenaState() != ArenaState.IN_GAME) {
                 event.setCancelled(true);
-            } else if (itemStack2.getType() != XMaterial.OAK_PLANKS.parseMaterial()) {
+            } else if (itemStack2.getType() == XMaterial.OAK_PLANKS.parseMaterial()) {
                 event.setCancelled(true);
             }
         } else if (player.getGameMode() != GameMode.CREATIVE) {
@@ -288,9 +288,11 @@ public class ArenaListener implements Listener {
                     return;
                 event.setCancelled(true);
             }
-            Arena arena = customPlayer.getArena();
-            if (arena.getArenaState() == ArenaState.COUNTING_DOWN || arena.getArenaState() == ArenaState.GAME_END) {
-                event.setCancelled(true);
+            if (customPlayer.inArena()) {
+                Arena arena = customPlayer.getArena();
+                if (arena.getArenaState() == ArenaState.COUNTING_DOWN || arena.getArenaState() == ArenaState.GAME_END) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -305,9 +307,11 @@ public class ArenaListener implements Listener {
                     return;
                 event.setCancelled(true);
             }
-            Arena arena = customPlayer.getArena();
-            if (arena.getArenaState() != ArenaState.IN_GAME) {
-                return;
+            if (customPlayer.inArena()) {
+                Arena arena = customPlayer.getArena();
+                if (arena.getArenaState() != ArenaState.IN_GAME) {
+                    return;
+                }
             }
             if (event.getEntity() instanceof Player) {
                 CustomPlayer target = Uhcffa.getCustomPlayer((Player) event.getEntity());

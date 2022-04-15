@@ -5,12 +5,14 @@ import com.lielamar.lielsutils.bukkit.scoreboard.ScoreboardUtils;
 import com.lielamar.lielsutils.groups.Pair;
 import org.bukkit.Bukkit;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.user.UserSet;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 import si.f5.hatosaba.uhcffa.utils.TextUtil;
 import si.f5.hatosaba.uhcffa.utils.TextUtils;
+import si.f5.hatosaba.uhcffa.utils.Translated;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,10 +50,14 @@ public class UpdateSidebar extends AsyncTask {
                         new Pair<>("%online%", Bukkit.getOnlinePlayers().size())
                 );
             } else if (customPlayer.inArena()) {
-                lines = ScoreboardUtils.assembleScoreboard(TextUtil.getByPlaceholders(Collections.singletonList(
-                        "&7%date%"
-                        ), user.asBukkitPlayer()),
-                        new Pair<>("%date%", TextUtils.getDate()));
+                Arena arena = customPlayer.getArena();
+                lines = ScoreboardUtils.assembleScoreboard(
+                        Arrays.asList(
+                                "",
+                                Translated.key("duel.opponent").args(arena.getEnemy(customPlayer).getPlayer().getName()).get(customPlayer.getPlayer()),
+                                ""
+                        )
+                );
             } else {
                 lines = ScoreboardUtils.assembleScoreboard(TextUtil.getByPlaceholders(Arrays.asList(
                         "&7%date%",

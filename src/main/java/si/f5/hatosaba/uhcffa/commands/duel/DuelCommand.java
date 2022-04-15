@@ -16,6 +16,7 @@ import si.f5.hatosaba.uhcffa.menu.KitSelectorMenu;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,7 +105,7 @@ public class DuelCommand extends SuperCommand {
         if (strings.length == 1) {
             return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).filter(s -> !s.equals(commandSender.getName())).collect(Collectors.toList());
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

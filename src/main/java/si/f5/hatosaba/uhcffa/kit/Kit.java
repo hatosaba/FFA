@@ -32,7 +32,7 @@ public class Kit {
     public Kit(Yaml yaml) {
 
         this.name = yaml.name;
-        this.icon = new ItemStack(Material.valueOf(yaml.getString("Kit.Icon")));
+        this.icon = new ItemStack(Material.valueOf(yaml.getString("Kit.Icon").toUpperCase()));
 
         //セクションが存在しなければ戻る
         if(yaml.isConfigurationSection("Inventory")) {
@@ -155,12 +155,29 @@ public class Kit {
         }*/
     }
 
+    public void setIcon(ItemStack icon) {
+        this.icon = icon;
+    }
+
+    public ItemStack[] getArmor() {
+        return armor;
+    }
+
+    public ItemStack[] getItems() {
+        return items;
+    }
+
     public String getName() {
         return name;
     }
 
+    public ItemStack getIcon() {
+        return icon;
+    }
+
     public void save() {
         Yaml yaml = KitManager.getInstance().makeYaml(name);
+        yaml.set("Kit.Icon", icon.getType().name());
 
         if(armor != null)
             yaml.set("Inventory.armor", Convertor.itemToBase64(armor));

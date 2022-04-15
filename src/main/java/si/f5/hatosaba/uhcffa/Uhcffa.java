@@ -24,6 +24,7 @@ import si.f5.hatosaba.uhcffa.commands.admin.AdminCommand;
 import si.f5.hatosaba.uhcffa.commands.duel.AcceptCommand;
 import si.f5.hatosaba.uhcffa.commands.duel.DuelCommand;
 import si.f5.hatosaba.uhcffa.commands.ffa.FFACommand;
+import si.f5.hatosaba.uhcffa.commands.kit.KitCommand;
 import si.f5.hatosaba.uhcffa.config.MainConfig;
 import si.f5.hatosaba.uhcffa.cosmetics.manager.KillManager;
 import si.f5.hatosaba.uhcffa.cosmetics.manager.TrailManager;
@@ -116,13 +117,6 @@ public final class Uhcffa extends JavaPlugin {
                 new UpdateSidebar()
         );
 
-        /*registerCommandHandler(
-                new UhcffaCommands(),
-                new KitSaveCommand(),
-                new AutomaticEventCommand(),
-                new DuelCommand()
-        );*/
-
         if (essentials == null) {
             Essentials essential = (Essentials) getServer().getPluginManager().getPlugin("Essentials");
             if (essential != null) {
@@ -145,11 +139,8 @@ public final class Uhcffa extends JavaPlugin {
                 customPlayerMap.put(playerID, customPlayer);
             }
         });
-
         initiate();
-
         registerCommands();
-
     }
 
     private void registerCommands() {
@@ -158,6 +149,7 @@ public final class Uhcffa extends JavaPlugin {
         new AdminCommand(this).registerCommand(this);
         new FFACommand(this).registerCommand(this);
         new InventoryCommand(this).registerCommand(this);
+        new KitCommand(this).registerCommand(this);
     }
 
 
@@ -294,7 +286,7 @@ public final class Uhcffa extends JavaPlugin {
 
     public void setSpectatorItem(Player player) {
         player.getInventory().clear();
-        ExecutableItemType.JOIN_ITEM.setItem(0, player);
+        ExecutableItemType.PLAY_ITEM.setItem(0, player);
         ExecutableItemType.SHOP_ITEM.setItem(4, player);
         ExecutableItemType.LEAVE_ITEM.setItem(8, player);
     }

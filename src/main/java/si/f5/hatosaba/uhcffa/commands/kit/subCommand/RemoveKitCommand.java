@@ -1,4 +1,4 @@
-package si.f5.hatosaba.uhcffa.commands.ffa.subCommands;
+package si.f5.hatosaba.uhcffa.commands.kit.subCommand;
 
 import com.lielamar.lielsutils.bukkit.commands.StandaloneCommand;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
@@ -10,6 +10,7 @@ import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +60,10 @@ public class RemoveKitCommand extends StandaloneCommand {
 
     @Override
     public List<String> tabOptions(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        return kitManager.getKits().stream().map(Kit::getName).collect(Collectors.toList());
+        if (args.length == 1) {
+            return kitManager.getKits().stream().map(Kit::getName).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override

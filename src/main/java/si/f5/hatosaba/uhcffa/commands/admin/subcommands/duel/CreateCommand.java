@@ -1,4 +1,4 @@
-package si.f5.hatosaba.uhcffa.commands.admin.subcommands;
+package si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel;
 
 import com.lielamar.lielsutils.bukkit.commands.StandaloneCommand;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
@@ -7,18 +7,21 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
+import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
+import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetLobby extends StandaloneCommand {
+public class CreateCommand extends StandaloneCommand {
 
     private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
+
     private final Uhcffa plugin;
     private final SuperCommand parent;
 
-    public SetLobby(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
-        super("setlobby", "ffa.admin");
+    public CreateCommand(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
+        super("create", "ffa.admin");
 
         this.plugin = plugin;
         this.parent = parent;
@@ -31,10 +34,26 @@ public class SetLobby extends StandaloneCommand {
             return false;
         }
 
-        Player player = (Player) commandSender;
-        Uhcffa.getInstance().config().setLobby(player.getLocation());
-        player.sendMessage("ロビーを設定しました");
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer((Player) commandSender);
 
+        if(args.length == 0) {
+            customPlayer.sendTranslated("not_arg");
+            return false;
+        }
+
+        String arenaName = args[0];
+        if (arenaName == null) {
+            customPlayer.sendTranslated("set.to.arena");
+            return false;
+        }
+        if (arenaManager.getArenas().containsKey(arenaName)) {
+            customPlayer.sendTranslated("map.already");
+            return false;
+        }
+        customPlayer.setSetupData();
+        customPlayer.getSetupData().setName(arenaName);
+        customPlayer.sendTranslated("map.created");
+        customPlayer.sendTranslated("map.set");
         return true;
     }
 

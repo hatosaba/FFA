@@ -79,6 +79,10 @@ public class PlayerListener implements Listener {
     public void onPickUp(PlayerPickupItemEvent event) {
         Player player = event.getPlayer();
 
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer(player);
+
+        if (customPlayer.inArena()) return;
+
         if (!player.getWorld().getName().equals("kitpvp"))
             return;
 

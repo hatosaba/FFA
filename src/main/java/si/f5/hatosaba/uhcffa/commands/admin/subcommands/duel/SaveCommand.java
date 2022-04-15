@@ -1,4 +1,4 @@
-package si.f5.hatosaba.uhcffa.commands.admin.subcommands;
+package si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel;
 
 import com.lielamar.lielsutils.bukkit.commands.StandaloneCommand;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
@@ -13,15 +14,14 @@ import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateCommand extends StandaloneCommand {
+public class SaveCommand extends StandaloneCommand {
 
     private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
-
     private final Uhcffa plugin;
     private final SuperCommand parent;
 
-    public CreateCommand(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
-        super("create", "ffa.admin");
+    public SaveCommand(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
+        super("save", "ffa.admin");
 
         this.plugin = plugin;
         this.parent = parent;
@@ -29,32 +29,30 @@ public class CreateCommand extends StandaloneCommand {
 
     @Override
     public boolean runCommand(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        if(!(commandSender instanceof Player)) {
+        if (!(commandSender instanceof Player)) {
             commandSender.sendMessage("only execute player");
             return false;
         }
 
-        CustomPlayer customPlayer = Uhcffa.getCustomPlayer((Player) commandSender);
+        Player player = (Player) commandSender;
+        final String playerID = PlayerConverter.getID(player);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
-        if(args.length == 0) {
-            customPlayer.sendTranslated("not_arg");
+        if (customPlayer.getSetupData() == null) {
+            player.sendMessage("/duel create [NAME] を実行してください");
             return false;
         }
 
-        String arenaName = args[0];
-        if (arenaName == null) {
-            customPlayer.sendTranslated("set.to.arena");
+        if (customPlayer.getSetupData().compile()) {
+            Arena arena = new Arena(customPlayer.getSetupData().getName(), customPlayer.getSetupData().getMaxBuildY(), customPlayer.getSetupData().getSpawn1(),
+                    customPlayer.getSetupData().getSpawn2());
+            arenaManager.registerArena(arena);
+            player.sendMessage("作成しました");
+            return true;
+        } else {
+            player.sendMessage("未定義です");
             return false;
         }
-        if (arenaManager.getArenas().containsKey(arenaName)) {
-            customPlayer.sendTranslated("map.already");
-            return false;
-        }
-        customPlayer.setSetupData();
-        customPlayer.getSetupData().setName(arenaName);
-        customPlayer.sendTranslated("map.created");
-        customPlayer.sendTranslated("map.set");
-        return true;
     }
 
     @Override

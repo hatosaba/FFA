@@ -15,3 +15,5 @@ commands:
     description: Main ffa Command
   inventory:
     description: Main inventory Command
+  kit:
+    description: Main kit Command

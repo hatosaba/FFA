@@ -1,4 +1,4 @@
-package si.f5.hatosaba.uhcffa.commands.admin.subcommands;
+package si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel;
 
 import com.lielamar.lielsutils.bukkit.commands.StandaloneCommand;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
@@ -6,23 +6,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
+import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class SetUpCommand extends StandaloneCommand {
+public class RemoveCommand extends StandaloneCommand {
 
     private final ArenaManager arenaManager = Uhcffa.getInstance().getArenaManager();
-
     private final Uhcffa plugin;
     private final SuperCommand parent;
 
-    public SetUpCommand(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
-        super("set", "ffa.admin");
+    public RemoveCommand(@NotNull Uhcffa plugin, @NotNull SuperCommand parent) {
+        super("remove", "ffa.admin");
 
         this.plugin = plugin;
         this.parent = parent;
@@ -37,41 +37,33 @@ public class SetUpCommand extends StandaloneCommand {
 
         Player player = (Player) commandSender;
         final String playerID = PlayerConverter.getID(player);
-        final CustomPlayer customPlayer = Uhcffa.getCustomPlayer(playerID);
+        final CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(playerID);
 
         if(args.length == 0) {
-            player.sendMessage("specify.duel.name");
+            player.sendMessage("足りない");
             return false;
         }
 
-        if(args[0] != null) {
-            if (customPlayer.getSetupData() == null) {
-                player.sendMessage("/duel create [NAME] を実行してください");
-                return false;
-            }
-
-            switch (args[0]) {
-                case "spawn1":
-                    customPlayer.getSetupData().setSpawn1(player.getLocation());
-                    player.sendMessage("spawn1を設定しました");
-                    return true;
-                case "spawn2":
-                    customPlayer.getSetupData().setSpawn2(player.getLocation());
-                    player.sendMessage("spawn2を設定しました");
-                    return true;
-                case "maxBuildY":
-                    customPlayer.getSetupData().setMaxBuildY(player.getLocation().getY());
-                    player.sendMessage("maxBuildYを設定しました");
-                    return true;
-            }
+        String arenaName = args[0];
+        if (arenaName == null) {
+            player.sendMessage("アリーナ名を指定設定してください");
+            return false;
         }
-        return false;
+
+        if (!arenaManager.getArenas().containsKey(arenaName)) {
+            player.sendMessage("存在しません");
+            return false;
+        }
+
+        arenaManager.removeArena(arenaName);
+        player.sendMessage("削除しました");
+        return true;
     }
 
     @Override
     public List<String> tabOptions(@NotNull CommandSender commandSender, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("maxBuildY", "spawn1", "spawn2");
+            return arenaManager.getArenas().values().stream().map(Arena::getName).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }

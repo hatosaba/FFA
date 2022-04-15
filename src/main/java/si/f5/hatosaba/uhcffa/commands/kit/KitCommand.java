@@ -1,30 +1,37 @@
-package si.f5.hatosaba.uhcffa.commands;
+package si.f5.hatosaba.uhcffa.commands.kit;
 
 import com.lielamar.lielsutils.bukkit.commands.Command;
 import com.lielamar.lielsutils.bukkit.commands.SuperCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
-import si.f5.hatosaba.uhcffa.arena.Arena;
-import si.f5.hatosaba.uhcffa.arena.ArenaState;
+import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.ItemCommand;
+import si.f5.hatosaba.uhcffa.commands.ffa.subCommands.JoinCommand;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.CreateKitCommand;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.RemoveKitCommand;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.SetIconCommand;
+import si.f5.hatosaba.uhcffa.commands.kit.subCommand.SetKitCommand;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
-import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InventoryCommand extends SuperCommand {
+public class KitCommand extends SuperCommand {
 
     private final Uhcffa plugin;
     private final Command[] commands;
-    public InventoryCommand(Uhcffa plugin) {
-        super("inventory", "");
+    public KitCommand(Uhcffa plugin) {
+        super("kit", "kit.use");
 
         this.plugin = plugin;
 
-        this.commands = new Command[]{};
+        this.commands = new Command[]{
+                new SetKitCommand(plugin, this),
+                new CreateKitCommand(plugin, this),
+                new RemoveKitCommand(plugin, this),
+                new SetIconCommand(plugin, this)
+        };
     }
 
     @Override
@@ -33,38 +40,16 @@ public class InventoryCommand extends SuperCommand {
             Player player = (Player) commandSender;
 
             if(args.length == 0) {
-                player.sendMessage("プレイヤー名を指定してください");
+                player.sendMessage("引数が足りません");
                 return false;
             }
 
-            String playerName = args[0];
+            Command subCommand = super.getSubCommand(args[0]);
 
-            Player target = Bukkit.getPlayer(playerName);
+            if (subCommand != null)
+                subCommand.execute(player, args);
 
-            if (target == null) {
-                player.sendMessage("プレイヤーが見つかりません");
-                return false;
-            }
-
-            CustomPlayer customPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(player));
-            CustomPlayer targetPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(target));
-            String playerID = PlayerConverter.getID(player);
-            String targetPlayerID = PlayerConverter.getID(target);
-
-            if (!(customPlayer.inArena() && targetPlayer.inArena())) return false;
-
-            if(customPlayer.getArena() == targetPlayer.getArena()) {
-                Arena arena = customPlayer.getArena();
-
-                if (arena.getArenaState() != ArenaState.GAME_END) {
-                    player.sendMessage("現在利用できません");
-                    return  false;
-                }
-
-                //arena.invSee(playerID, targetPlayerID);
-                return  true;
-            }
-
+            return false;
         }
         return false;
     }
@@ -103,10 +88,6 @@ public class InventoryCommand extends SuperCommand {
 
     @Override
     public @NotNull String[] getAliases() {
-        return new String[] {
-                "inv"
-        };
+        return new String[0];
     }
 }
-
-

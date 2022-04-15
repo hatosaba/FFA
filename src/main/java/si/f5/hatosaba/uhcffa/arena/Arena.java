@@ -162,6 +162,7 @@ public class Arena {
         player.setLevel(0);
         player.setFallDistance(0.0f);
         player.setFireTicks(0);
+        player.getInventory().setArmorContents(null);
 
         if (players.size() == 1)
             setKit(null);
@@ -356,6 +357,10 @@ public class Arena {
         arenaState = ArenaState.GAME_END;
 
         removeDropItem();
+
+        if (players.size() <= 0) {
+            return;
+        }
 
         CustomPlayer spectator = this.spectators.isEmpty() ? null : this.spectators.get(0);
         CustomPlayer winner = (spectator != null)

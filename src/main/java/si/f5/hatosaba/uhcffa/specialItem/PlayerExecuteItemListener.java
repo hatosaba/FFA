@@ -16,6 +16,9 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.event.PlayerDamageEntityEvent;
+import si.f5.hatosaba.uhcffa.utils.Translated;
+
+import java.util.Locale;
 
 public class PlayerExecuteItemListener implements Listener {
 
@@ -29,7 +32,11 @@ public class PlayerExecuteItemListener implements Listener {
     @EventHandler()
     public void on(PlayerInteractEvent event) {
         ExecutableItem item = toExecutableItem(event.getItem());
-        if (item != null) item.onClick(event);
+        if (item != null) {
+            if(!event.getItem().getItemMeta().hasDisplayName())
+                event.getItem().getItemMeta().setDisplayName(Translated.key("item."  + item.id.toLowerCase(Locale.ROOT)).get(event.getPlayer()));
+            item.onClick(event);
+        }
     }
 
     @EventHandler()

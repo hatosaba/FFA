@@ -6,7 +6,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import si.f5.hatosaba.uhcffa.Uhcffa;
-import si.f5.hatosaba.uhcffa.commands.admin.subcommands.*;
+import si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel.CreateCommand;
+import si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel.RemoveCommand;
+import si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel.SaveCommand;
+import si.f5.hatosaba.uhcffa.commands.admin.subcommands.duel.SetUpCommand;
+import si.f5.hatosaba.uhcffa.commands.admin.subcommands.ffa.SetLobby;
+import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +61,8 @@ public class AdminCommand extends SuperCommand {
 
     @Override
     public void subCommandNotFoundEvent(@NotNull CommandSender commandSender) {
-        commandSender.sendMessage("not found command");
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer(commandSender);
+        customPlayer.sendTranslated("command.no-permission");
     }
 
     @Override

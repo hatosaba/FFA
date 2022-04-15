@@ -35,6 +35,8 @@ public class LeaveItem extends ExecutableItem {
         if(player.getGameMode() == GameMode.SURVIVAL) {
             player.setAllowFlight(false);
             player.setFlying(false);
+            player.setMaxHealth(20);
+            player.setHealth(player.getMaxHealth());
         }
         event.setCancelled(true);
     }

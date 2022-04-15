@@ -1,21 +1,3 @@
 'spawnpoints': []
 'editroom': 'world:0:64:0:0:0'
 'lobby': 'world:0:64:0:0:0'
-
-current-season:
-  time-zone: 'Asia/Tokyo' # The timezone for week releases to be based off.
-  start-date: '06/06/2020' # This is what all of the week releases are based off. Format: dd/mm/yyyy
-  start-time: '20:00' # The time of day week releases are based off.
-  reset-time: '09:00'
-
-automatic-event:
-  start-time: '23:28' # The time of day week releases are based off.
-
-
-ranking-time-format: # The time format used for saying how long until daily quests expire.
-  with-months-weeks: "%dmo %dw %dd %dh %dm %ds"
-  with-weeks-days: "%dw %dd %dh %dm %ds"
-  with-days-hours: "%dd %dh %dm %ds"
-  with-hours-minutes: "%dh %dm %ds"
-  with-minutes-seconds: "%dm %ds"
-  with-seconds: "%ds"

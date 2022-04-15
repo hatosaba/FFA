@@ -11,6 +11,7 @@ import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,10 @@ public class JoinCommand extends StandaloneCommand {
 
     @Override
     public List<String> tabOptions(@NotNull CommandSender commandSender, @NotNull String[] args) {
-        return KitManager.getInstance().getKits().stream().map(Kit::getName).collect(Collectors.toList());
+        if (args.length == 1) {
+            return KitManager.getInstance().getKits().stream().map(Kit::getName).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override

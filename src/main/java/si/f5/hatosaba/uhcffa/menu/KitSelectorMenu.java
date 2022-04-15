@@ -8,6 +8,7 @@ import fr.minuskube.inv.content.Pagination;
 import fr.minuskube.inv.content.SlotIterator;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.ArenaManager;
@@ -16,6 +17,7 @@ import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.kit.KitManager;
 import si.f5.hatosaba.uhcffa.utils.ItemBuilder;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
+import si.f5.hatosaba.uhcffa.utils.Translated;
 
 import java.util.stream.Collectors;
 
@@ -53,7 +55,7 @@ public class KitSelectorMenu implements InventoryProvider {
             Kit kit = kitManager.getKits().stream().collect(Collectors.toList()).get(i);
 
             items[i] = ClickableItem.of(
-                    ItemBuilder.of(Material.BUCKET).name("&a" + kit.getName().toUpperCase())
+                    ItemBuilder.of(kit.getIcon().getType()).name(Translated.key("duel." + kit.getName()).get(player))
                             .lore(
                                     "&7Click to invite " + PlayerConverter.getName(toPlayerID) + " to",
                                     "&7duel",
@@ -62,10 +64,12 @@ public class KitSelectorMenu implements InventoryProvider {
                                     "&7" + arenaManager.getArenas().values().stream()
                                             .filter(arena1 -> {
                                                 if (arena1.getKit() == null) return false;
+                                                if (arena1.getKit() != kit) return false;
                                                 if (arena1.getArenaState() != ArenaState.IN_GAME) return false;
                                                 return true;
                                             }).count()
                                             + " currently playing!")
+                            .flags(ItemFlag.HIDE_ATTRIBUTES)
                             .build()
                     , e -> {
                         player.closeInventory();

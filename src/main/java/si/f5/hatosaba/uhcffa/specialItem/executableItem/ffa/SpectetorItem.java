@@ -22,7 +22,7 @@ public class SpectetorItem extends ExecutableItem {
     public ItemStack buildItemStack() {
         return define(
                 ItemBuilder.of(Material.WATCH)
-                        .name("&bFFAを観戦する")
+                        .name("&6Spectator to FFA")
                         .build()
         );
     }
