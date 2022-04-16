@@ -62,11 +62,36 @@ public class Kit {
         player.setHealth(player.getMaxHealth());
         User user  = UserSet.getInstnace().getUser(player);
 
+        if (user.isEditedKit(name)) {
+            user.apply(this);
+            return;
+        }
+
         if(armor != null)
             player.getInventory().setArmorContents(armor);
         if(items != null)
             player.getInventory().setContents(items);
 
+        for(int i = 0; i< player.getInventory().getSize()-1; ++i) {
+            ItemStack item = player.getInventory().getItem(i);
+            if(item == null) continue;
+            if(item.getType().equals(Material.COBBLESTONE)) {
+                int finalI = i;
+                Blocks.BLOCKS.stream().filter(kit1 -> kit1.item == user.blockItem).forEach(kit1 -> {
+                    ItemStack block = kit1.item.clone();
+                    if (block.hasItemMeta()) {
+                        ItemMeta im = block.getItemMeta();
+                        if (im.hasLore())
+                            im.setLore(new ArrayList<>());
+                        if (im.hasDisplayName())
+                            im.setDisplayName("");
+                        block.setItemMeta(im);
+                    }
+                    block.setAmount(64);
+                    player.getInventory().setItem(finalI, block);
+                });
+            }
+        }
         /*CustomPlayer customPlayer = Uhcffa.getInstance().getCustomPlayer(PlayerConverter.getID(player));
 
         final CustomPlayer.Preset preset = customPlayer.getPreset();
@@ -94,27 +119,6 @@ public class Kit {
         } else {
             preset.applyContent();
         }*/
-
-        for(int i = 0; i< player.getInventory().getSize()-1; ++i) {
-            ItemStack item = player.getInventory().getItem(i);
-            if(item == null) continue;
-            if(item.getType().equals(Material.COBBLESTONE)) {
-                int finalI = i;
-                Blocks.BLOCKS.stream().filter(kit1 -> kit1.item == user.blockItem).forEach(kit1 -> {
-                    ItemStack block = kit1.item.clone();
-                    if (block.hasItemMeta()) {
-                        ItemMeta im = block.getItemMeta();
-                        if (im.hasLore())
-                            im.setLore(new ArrayList<>());
-                        if (im.hasDisplayName())
-                            im.setDisplayName("");
-                        block.setItemMeta(im);
-                    }
-                    block.setAmount(64);
-                    player.getInventory().setItem(finalI, block);
-                });
-            }
-        }
 
 /*        ItemStack[] armor = new ItemStack[4];
         armor[0] = ItemBuilder.of(Material.IRON_BOOTS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();

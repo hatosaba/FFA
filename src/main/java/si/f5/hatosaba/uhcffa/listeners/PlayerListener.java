@@ -11,7 +11,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
@@ -19,11 +21,14 @@ import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 import si.f5.hatosaba.uhcffa.Uhcffa;
 import si.f5.hatosaba.uhcffa.arena.Arena;
 import si.f5.hatosaba.uhcffa.arena.ArenaState;
+import si.f5.hatosaba.uhcffa.kit.KitManager;
+import si.f5.hatosaba.uhcffa.menu.LayoutEditorMenu;
 import si.f5.hatosaba.uhcffa.modules.CustomPlayer;
 import si.f5.hatosaba.uhcffa.specialItem.executableItem.ffa.FlaskOfCleansing;
 import si.f5.hatosaba.uhcffa.spectetor.SpectetorSet;
@@ -138,6 +143,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         if (!player.getWorld().getName().equals("kitpvp"))
             return;
+        event.getItemDrop().setItemStack(new ItemStack(Material.AIR));
         if(player.getGameMode() == GameMode.SURVIVAL) event.setCancelled(true);
     }
 
@@ -228,6 +234,10 @@ public class PlayerListener implements Listener {
 
         switch (event.getCause()){
             case FALL:
+                if (customPlayer.inArena()) {
+                    Arena arena = customPlayer.getArena();
+                    if  (arena.getArenaState() == ArenaState.IN_GAME) return;
+                }
                 event.setCancelled(true);
             case VOID:
         }
@@ -303,6 +313,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onHorseInventory(InventoryClickEvent event) {
+        CustomPlayer customPlayer = Uhcffa.getCustomPlayer(event.getWhoClicked());
+
         if (event.getInventory() instanceof HorseInventory) {
             if(event.getWhoClicked().getGameMode() != GameMode.SURVIVAL) return;
 
@@ -311,6 +323,20 @@ public class PlayerListener implements Listener {
             }
         }
 
+        if (customPlayer.inArena()) return;
+
+        if (KitManager.getInstance().isSelected(customPlayer.getPlayer())) return;
+
+        if(event.getWhoClicked().getGameMode() != GameMode.ADVENTURE) return;
+        if(event.getAction().equals(InventoryAction.DROP_ALL_CURSOR) || event.getAction().equals(InventoryAction.DROP_ONE_CURSOR)) {
+            event.setCancelled(true);
+        }
+        if(event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+            event.setCancelled(true);
+        }
+        if (event.getView().getBottomInventory() == event.getClickedInventory()) {
+                event.setCancelled(true);
+            }
     }
 
     /*@EventHandler

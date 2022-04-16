@@ -85,7 +85,11 @@ public class ArenaManager {
         }
         if (availableGames.isEmpty()) {
             customPlayer.sendTranslated("arena.not.use.arena");
-            //player.sendMessage("使用できるアリーナがありません");
+            return;
+        }
+        System.out.println(availableGames.size());
+        if (availableGames.size() == 0) {
+            customPlayer.sendTranslated("arena.not.use.arena");
             return;
         }
         Collections.shuffle(availableGames);

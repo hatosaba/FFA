@@ -15,6 +15,8 @@ import si.f5.hatosaba.uhcffa.kit.Kit;
 import si.f5.hatosaba.uhcffa.sound.SoundEffects;
 import si.f5.hatosaba.uhcffa.specialItem.ExecutableItemType;
 import si.f5.hatosaba.uhcffa.specialItem.ExecutableManager;
+import si.f5.hatosaba.uhcffa.user.User;
+import si.f5.hatosaba.uhcffa.user.UserSet;
 import si.f5.hatosaba.uhcffa.utils.PlayerConverter;
 
 import java.util.HashMap;
@@ -26,6 +28,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CustomPlayer {
 
     private final String playerID;
+
+    private User user;
 
     private final LanguagePlayer languagePlayer;
 
@@ -43,6 +47,7 @@ public class CustomPlayer {
 
     public CustomPlayer(final String playerID) {
         this.playerID = playerID;
+        this.user = UserSet.getInstnace().getUser(PlayerConverter.getPlayer(playerID));
         this.languagePlayer = Triton.get().getPlayerManager().get(UUID.fromString(playerID));
         loadAllPlayerData();
     }
@@ -109,6 +114,10 @@ public class CustomPlayer {
 
     public String getPlayerID() {
         return playerID;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public Player getPlayer() {

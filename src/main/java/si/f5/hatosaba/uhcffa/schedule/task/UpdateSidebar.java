@@ -54,7 +54,7 @@ public class UpdateSidebar extends AsyncTask {
                 lines = ScoreboardUtils.assembleScoreboard(
                         Arrays.asList(
                                 "",
-                                Translated.key("duel.opponent").args(arena.getEnemy(customPlayer).getPlayer().getName()).get(customPlayer.getPlayer()),
+                                Translated.key("duel.opponent").args(arena.getEnemy(customPlayer) == null ? "none" : arena.getEnemy(customPlayer).getPlayer().getName()).get(customPlayer.getPlayer()),
                                 ""
                         )
                 );

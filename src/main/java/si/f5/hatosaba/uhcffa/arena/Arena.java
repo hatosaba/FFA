@@ -180,7 +180,6 @@ public class Arena {
             }
         }
 
-
         Uhcffa.getInstance().setLobbyItem(player);
         player.teleport(Uhcffa.getInstance().config().getLobby());
         SpectetorSet.getInstance().applyHideMode(player);
@@ -246,19 +245,13 @@ public class Arena {
         player.getInventory().setArmorContents(null);
         player.getInventory().setHeldItemSlot(0);
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
-        //PlayerUtils.teleportToLobby(player);
-        /*KitUtils.joinItem(player, playerObject);
-        if (Duel.getMainConfig().isOptionBossbar()) {
-            Duel.getBossbar().hide(player);
-        }
-        ScoreboardManager.firstScoreboard(playerObject);*/
         for (CustomPlayer po : getPlayers()) {
             po.getPlayer().showPlayer(player);
         }
     }
 
     public void startGame() {
-        int minute = /*Duel.getMainConfig().getConfig().getInt("arena.time");*/ 500;
+        int minute = 500;
         int second = 0;
 
         this.maxCount = 60 * minute + second;
@@ -300,52 +293,8 @@ public class Arena {
             player.getInventory().clear();
             player.getInventory().setHeldItemSlot(0);
             player.getInventory().setArmorContents(null);
-
-
             applyKit(customPlayer.getPlayerID());
-
-            /*if (Duel.getMainConfig().isOptionUseKit()) {
-                Kit kit = Duel.getKitManager().getKit(playerObject.getKitSelected());
-                if (kit == null) {
-                    continue;
-                }
-
-                KitUtils.giveKit(playerObject.getPlayer(), kit);
-            } else {
-                KitUtils.giveItem(player);
-            }*/
         }
-
-        /*for (PlayerObject playerObject3 : this.players) {
-            ScoreboardManager.firstScoreboard(playerObject3);
-        }*/
-
-        /*String line = Duel.getMessageConfig().getString("arenas.ingame.start-message.line");
-        List<TextMode> currentTextMode = new LinkedList<TextMode>();
-        for (String text : Duel.getMessageConfig().getList("arenas.ingame.start-message.messages")) {
-            currentTextMode.clear();
-            if (text.contains("{replace_text_mode}")) {
-                currentTextMode.add(TextMode.REPLACE);
-            }
-            if (text.contains("{center_text_mode}")) {
-                currentTextMode.add(TextMode.CENTER);
-            }
-            text = text.replace("{replace_text_mode}", "").replace("{center_text_mode}", "").replace("%%line%%", line)
-                    .replace("%%game_name%%", this.getName());
-            if (currentTextMode.contains(TextMode.CENTER)) {
-                if (currentTextMode.contains(TextMode.REPLACE)) {
-                    //this.sendCenterGameMessage(TextUtils.replaceText(text));
-                } else {
-                    this.sendCenterGameMessage(text);
-                }
-            } else if (currentTextMode.contains(TextMode.REPLACE)) {
-                //this.sendGameMessage(TextUtils.replaceText(text));
-            } else {
-                //this.sendGameMessage(TextUtils.replaceText(text));
-            }
-        }*/
-
-        //this.spectators.forEach(ScoreboardManager::firstScoreboard);
     }
 
     public void applyKit(String playerID) {
@@ -368,12 +317,16 @@ public class Arena {
                 : (this.APlayers.isEmpty() ? spectator : this.APlayers.get(0)))
                 : this.players.get(0);
 
-        winner.sendTranslated("duel.inventories");
-        winner.sendTranslated("duel.result", "You", spectator.getPlayer().getName());
+        winner.getPlayer().spigot().sendMessage(new ComponentBuilder(Translated.key("duel.inventories").args(spectator.getPlayer().getName()).get(spectator.getPlayer()))
+                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + spectator.getPlayer().getName()))
+                .create());
+        winner.sendTranslated("duel.result-win", spectator.getPlayer().getName());
         Titles.sendTitle(winner.getPlayer(), Translated.key("duel.you-win").get(winner.getPlayer()), "");
 
-        spectator.sendTranslated("duel.inventories");
-        spectator.sendTranslated("duel.result", "You", spectator.getPlayer().getName());
+        spectator.getPlayer().spigot().sendMessage(new ComponentBuilder(Translated.key("duel.inventories").args(spectator.getPlayer().getName()).get(spectator.getPlayer()))
+                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + winner.getPlayer().getName()))
+                .create());
+        spectator.sendTranslated("duel.result-loser", winner.getPlayer().getName());
         Titles.sendTitle(spectator.getPlayer(), Translated.key("duel.you-loser").get(spectator.getPlayer()), "");
 
         final Player player = winner.getPlayer();

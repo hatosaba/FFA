@@ -36,6 +36,8 @@ public class User {
 
     public final PurchasedKit blocks;
 
+    private ItemStack[] items;
+
     public final PurchasedEffect purchasedEffect;
 
     public final PurchasedTrail purchasedTrail;
@@ -74,16 +76,26 @@ public class User {
         }
     }
 
-    public void saveKit(Player player) {
-        if(KitManager.getInstance().isSelected(player)) {
-            Map<String, ItemStack[]> contents = new HashMap<>();
-            contents.put("armor", player.getInventory().getArmorContents());
-            contents.put("items", player.getInventory().getContents());
-            this.kit.put(KitManager.getInstance().getSelectedPlayer().get(player).getName(), contents);
-            player.sendMessage("キットをセーブしました");
-        }else {
-            player.sendMessage("キットを選択した状態でこのコマンドを実行してください");
+    public void saveKit(Kit kit, ItemStack[] hotbar, ItemStack[] items) {
+        ItemStack[] contents = new ItemStack[36];
+        int i;
+        for (i = 0; i < 9; i++) {
+            contents[i] = hotbar[i];
         }
+        for (int j = 0; j < 27; j++) {
+            contents[i + j] = items[j];
+        }
+        Map<String, ItemStack[]> test = new HashMap<>();
+        test.put("items", contents);
+        test.put("armor", kit.getArmor());
+        this.kit.put(kit.getName(), test);
+    }
+
+    public void resetKit(Kit kit) {
+        Map<String, ItemStack[]> contents = new HashMap<>();
+        contents.put("armor", kit.getArmor());
+        contents.put("items", kit.getItems());
+        this.kit.put(kit.getName(), contents);
     }
 
     public void apply(Kit kit) {
@@ -91,7 +103,7 @@ public class User {
         asBukkitPlayer().setHealth(asBukkitPlayer().getMaxHealth());
         CustomPlayer customPlayer = Uhcffa.getCustomPlayer(PlayerConverter.getID(asBukkitPlayer()));
 
-        final CustomPlayer.Preset preset = customPlayer.getPreset();
+ /*       final CustomPlayer.Preset preset = customPlayer.getPreset();
         if (preset == null) {
             ItemStack[] armor = new ItemStack[4];
             armor[0] = ItemBuilder.of(Material.IRON_BOOTS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
@@ -116,46 +128,9 @@ public class User {
             customPlayer.setPreset();
         } else {
             preset.applyContent();
-        }
+        }*/
 
-        for(int i = 0; i<asBukkitPlayer().getInventory().getSize()-1; ++i) {
-            ItemStack item = asBukkitPlayer().getInventory().getItem(i);
-            if(item == null) continue;
-            if(item.getType().equals(Material.COBBLESTONE)) {
-                int finalI = i;
-                Blocks.BLOCKS.stream().filter(kit1 -> kit1.item.isSimilar(blockItem)).forEach(kit1 -> {
-                    ItemStack block = kit1.item.clone();
-                    block.setAmount(64);
-                    asBukkitPlayer().getInventory().setItem(finalI, block);
-                });
-            }
-        }
-
-        /*ItemStack[] armors = this.kit.get(kit.getName()).get("armor");
-        //ItemStack[] items = this.kit.get(kit.getName()).get("items");
-
-        *//*if(armors != null)
-            asBukkitPlayer().getInventory().setArmorContents(armors);*//*
-        ItemStack[] armor = new ItemStack[4];
-        armor[0] = ItemBuilder.of(Material.IRON_BOOTS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
-        armor[1] = ItemBuilder.of(Material.IRON_LEGGINGS).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
-        armor[2] = ItemBuilder.of(Material.DIAMOND_CHESTPLATE).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2).build();
-        armor[3] = ItemBuilder.of(Material.DIAMOND_HELMET).enchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1).build();
-
-        asBukkitPlayer().getInventory().setArmorContents(armor);
-        *//*if(items != null)
-            asBukkitPlayer().getInventory().setContents(items);*//*
-
-        final PlayerInventory inv = asBukkitPlayer().getInventory();
-
-        inv.setItem(0, ItemBuilder.of(Material.DIAMOND_SWORD).build());
-        inv.setItem(1, ItemBuilder.of(Material.FISHING_ROD).build());
-        inv.setItem(2, ItemBuilder.of(Material.BOW).build());
-        inv.setItem(3, ItemBuilder.of(Material.ARROW).amount(8).build());
-        inv.setItem(4, ExecutableItemType.LIGHT_APPLE.getItem());
-        inv.setItem(8, ItemBuilder.of(Material.COBBLESTONE).amount(64).build());
-
-        for(int i = 0; i<asBukkitPlayer().getInventory().getSize()-1; ++i) {
+/*        for(int i = 0; i<asBukkitPlayer().getInventory().getSize()-1; ++i) {
             ItemStack item = asBukkitPlayer().getInventory().getItem(i);
             if(item == null) continue;
             if(item.getType().equals(Material.COBBLESTONE)) {
@@ -167,10 +142,44 @@ public class User {
                 });
             }
         }*/
+
+        ItemStack[] armors = this.kit.get(kit.getName()).get("armor");
+        ItemStack[] items = this.kit.get(kit.getName()).get("items");
+
+        if(armors != null)
+            asBukkitPlayer().getInventory().setArmorContents(armors);
+        if(items != null)
+            asBukkitPlayer().getInventory().setContents(items);
+
+        /*final PlayerInventory inv = asBukkitPlayer().getInventory();
+
+        inv.setItem(0, ItemBuilder.of(Material.DIAMOND_SWORD).build());
+        inv.setItem(1, ItemBuilder.of(Material.FISHING_ROD).build());
+        inv.setItem(2, ItemBuilder.of(Material.BOW).build());
+        inv.setItem(3, ItemBuilder.of(Material.ARROW).amount(8).build());
+        inv.setItem(4, ExecutableItemType.LIGHT_APPLE.getItem());
+        inv.setItem(8, ItemBuilder.of(Material.COBBLESTONE).amount(64).build());*/
+
+        for(int i = 0; i<asBukkitPlayer().getInventory().getSize()-1; ++i) {
+            ItemStack item = asBukkitPlayer().getInventory().getItem(i);
+            if(item == null) continue;
+            if(item.getType().equals(Material.COBBLESTONE)) {
+                int finalI = i;
+                Blocks.BLOCKS.stream().filter(kit1 -> kit1.item.isSimilar(blockItem)).forEach(kit1 -> {
+                    ItemStack block = kit1.item.clone();
+                    block.setAmount(64);
+                    asBukkitPlayer().getInventory().setItem(finalI, block);
+                });
+            }
+        }
     }
 
     public boolean isEditedKit(String kitName) {
         return this.kit.containsKey(kitName);
+    }
+
+    public ItemStack[] getKit(Kit kit) {
+        return this.kit.get(kit.getName()).get("items");
     }
 
     //指定数だけ所持コイン数を増やす

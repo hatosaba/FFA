@@ -50,6 +50,7 @@ public class NormalKitSelectorMenu implements InventoryProvider {
                     ItemBuilder.of(kit.getIcon().getType()).name(Translated.key("duel." + kit.getName()).get(player))
                             .lore(
                                     "",
+                                    "&8Right Click to edit it",
                                     "&eLeft Click to play",
                                     "&7" + arenaManager.getArenas().values().stream()
                                             .filter(arena1 -> {
@@ -66,12 +67,13 @@ public class NormalKitSelectorMenu implements InventoryProvider {
                             player.closeInventory();
                             arenaManager.joinMatch(Uhcffa.getCustomPlayer(player), kit);
                         }
+                        if (e.isRightClick())
+                            LayoutEditorMenu.INVENTORY(player, kit).open(player);
                     });
         }
 
         contents.set(5,4, ClickableItem.of(ItemBuilder.of(Material.BARRIER).build(), e -> player.closeInventory()));
-        contents.set(5,7, ClickableItem.of(ItemBuilder.of(Material.BARRIER).build(), e -> LayoutEditorMenu.INVENTORY(player, kitManager.getKits().stream().findFirst().get()).open(player)));
-
+        //contents.set(5,5, ClickableItem.of(ItemBuilder.of(Material.ANVIL).name(Translated.key("gui.edit").get(player)).build(), e -> player.closeInventory()));
 
         pagination.setItems(items);
         pagination.setItemsPerPage(6);

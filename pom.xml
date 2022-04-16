@@ -208,11 +208,6 @@
             <artifactId>XSeries</artifactId>
             <version>8.7.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>spigotcommandlib</groupId>-->
-<!--            <artifactId>spigotcommandlib</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>com.lielamar</groupId>
